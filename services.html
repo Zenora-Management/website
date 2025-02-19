@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zenora MGMT - Services</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #222;
+      color: #ddd;
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.7;
+    }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    a { color: #fff; text-decoration: none; transition: color 0.3s; }
+    a:hover { color: #f3e0ff; }
+    ul { list-style-type: none; }
+
+    /* HEADER & NAV (same as index) */
+    header {
+      background-color: #222;
+      border-bottom: 1px solid #7b1fa2;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-left img { height: 50px; border-radius: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-item { position: relative; }
+    .nav-item:hover .dropdown,
+    .dropdown:hover { display: block; }
+    .dropdown {
+      display: none;
+      position: absolute;
+      background: #2e1d3c;
+      top: 100%;
+      left: 0;
+      min-width: 160px;
+      border: 1px solid #7b1fa2;
+      border-radius: 6px;
+      z-index: 999;
+      overflow: hidden;
+    }
+    .dropdown li {
+      padding: 0.5rem 1rem;
+      transition: background-color 0.3s;
+    }
+    .dropdown li:hover {
+      background-color: #7b1fa2;
+    }
+
+    .services-container {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #f6eafe;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-family: 'Playfair Display', serif;
+      text-transform: uppercase;
+    }
+    .service-item {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background-color: #2a1f38;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .service-item h2 {
+      margin-bottom: 1rem;
+      color: #e5c6ff;
+      font-family: 'Playfair Display', serif;
+    }
+    .service-item p {
+      line-height: 1.6;
+      color: #ccc;
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #7b1fa2;
+      background-color: #222;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    footer p {
+      color: #bbb;
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="index.html">
+          <img src="zenoralogo.png" alt="Zenora MGMT Logo"/>
+        </a>
+      </div>
+      <ul class="nav-right">
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-item">
+          <a href="services.html">Services</a>
+          <ul class="dropdown">
+            <li><a href="services.html">Our Services</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </li>
+        <li><a href="rent-analysis.html">Rent Analysis</a></li>
+        <li><a href="list-your-home.html">List Your Home</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="services-container">
+    <h1>Our Services</h1>
+
+    <div class="service-item">
+      <h2>Full-Service Property Management</h2>
+      <p>
+        We handle everything from marketing your property and finding
+        reliable tenants to managing day-to-day maintenance requests.
+        Enjoy peace of mind while we maximize your rental income.
+      </p>
+    </div>
+
+    <div class="service-item">
+      <h2>Pricing & Special Offers</h2>
+      <p>
+        - Base price: <strong>$1,999/year</strong> (Limited-Time Special)<br/>
+        - Referral Discount: <strong>$500 off/year</strong><br/>
+        - Switching from another Property Management company?
+          <strong>$500 off/year</strong><br/>
+      </p>
+    </div>
+    <!-- Add more services as needed -->
+  </div>
+
+  <footer>
+    <p>Phone: (123) 456-7890 | Email: info@zenoramgmt.com</p>
+    <p>Address: 1234 Luxury Lane, Suite 100, Metropolis, USA</p>
+    <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
+
+
