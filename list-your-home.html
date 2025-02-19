@@ -13,43 +13,49 @@
     rel="stylesheet"
   />
 
+  <!-- Google Maps Places API (replace YOUR_API_KEY with your actual key) -->
+  <script 
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"
+    async 
+    defer
+  ></script>
+
   <style>
     html { scroll-behavior: smooth; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #f6f9fc;
-      color: #333;
+      background-color: #1a171d;
+      color: #eee;
       margin:0;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
     a {
-      color: #333;
+      color: #d4af37;
       text-decoration: none;
       transition: color 0.3s;
     }
     a:hover {
-      color: #6a1b9a;
+      color: #fffbd2;
     }
     ul { list-style-type: none; }
 
     /* HEADER */
     header {
-      background-color: #fff;
-      border-bottom: 1px solid #ccc;
+      background-color: #201d24;
+      border-bottom: 1px solid #5a416b;
       position: sticky;
       top: 0;
       z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 1200px; margin: 0 auto;
       padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .nav-left img { height: 50px; border-radius: 8px; }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
@@ -59,12 +65,12 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #f8f8f8;
+      background: #2e2934;
       top: 100%;
       left: 0;
       min-width: 150px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
       z-index: 999;
       overflow: hidden;
     }
@@ -73,7 +79,7 @@
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #eee;
+      background-color: #5a416b;
     }
 
     /* MAIN */
@@ -81,20 +87,20 @@
       max-width: 600px;
       margin: 3rem auto;
       padding: 2rem;
-      background-color: #fff;
+      background-color: #201d24;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     }
     h1 {
       text-align: center;
       margin-bottom: 1rem;
-      color: #6a1b9a;
+      color: #ffd57e;
       font-family: 'Playfair Display', serif;
     }
     p {
       text-align: center;
       margin-bottom: 1rem;
-      color: #555;
+      color: #ccc;
     }
     form {
       display: flex;
@@ -104,47 +110,60 @@
     label {
       margin-top: 1rem;
       font-weight: 500;
-      color: #444;
+      color: #f6e1b9;
     }
     input, select, textarea {
       padding: 0.7rem;
       margin-top: 0.3rem;
-      border: 1px solid #ccc;
+      border: 1px solid #5a416b;
       border-radius: 6px;
-      background-color: #f8f8f8;
-      color: #333;
+      background-color: #2e2934;
+      color: #eee;
       font-family: 'Poppins', sans-serif;
+    }
+    .name-row {
+      display: flex; 
+      gap: 1rem;
+    }
+    .name-row > div {
+      flex: 1;
     }
     button {
       margin-top: 1.5rem;
       padding: 0.8rem;
-      background-color: #6a1b9a;
+      background-color: #d4af37;
       border: none;
       border-radius: 6px;
-      color: #fff;
+      color: #201d24;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
+      font-weight: 600;
     }
     button:hover {
-      background-color: #7b1fa2;
+      background-color: #fffbd2;
       transform: translateY(-2px);
     }
 
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #ccc;
-      background-color: #fff;
+      border-top: 1px solid #5a416b;
+      background-color: #201d24;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #777;
+      color: #cbb6e0;
       margin: 0.2rem 0;
       font-size: 0.9rem;
+    }
+    .email-link {
+      color: #d4af37;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <!-- HEADER -->
   <header>
     <div class="nav-container">
       <div class="nav-left">
@@ -173,27 +192,98 @@
     <div class="list-container">
       <h1>List Your Home With Us</h1>
       <p>Provide details below and we'll get back to you within 24 hours!</p>
-      <form>
+      
+      <!-- The form to "send" an email to zenoramgmt@gmail.com -->
+      <form id="listForm">
+        <!-- Plan selection -->
         <label for="plan">Which Plan are you interested in?</label>
         <select id="plan" required>
           <option value="" disabled selected>Select a Plan...</option>
-          <option value="ZenPlatinum">$1999/year (ZenPlatinum)</option>
-          <option value="ZenGold">$1488/year (ZenGold)</option>
-          <option value="ZenProfPhotos">$200 (Zen Prof Photos)</option>
-          <option value="Referral/AnotherPM">$1500 - $500 off (Referral)</option>
+          <option value="ZenPlatinum">ZenPlatinum - $1999/year</option>
+          <option value="ZenGold">ZenGold - $1488/year</option>
+          <option value="ZenFlix">ZenFlix - $200</option>
+          <option value="ReferralPM">Referral - $1499</option>
         </select>
 
-        <label for="name">Name</label>
-        <input type="text" id="name" required />
+        <!-- Name row -->
+        <div class="name-row">
+          <div>
+            <label for="firstName">First Name</label>
+            <input 
+              type="text" 
+              id="firstName"
+              required
+            />
+          </div>
+          <div>
+            <label for="lastName">Last Name</label>
+            <input 
+              type="text" 
+              id="lastName"
+              required
+            />
+          </div>
+        </div>
 
+        <!-- Email validation pattern, must contain '@' + '.' at least -->
         <label for="email">Email</label>
-        <input type="email" id="email" required />
+        <input 
+          type="email" 
+          id="email"
+          pattern="^[^@]+@[^@]+\.[^@]+$" 
+          required 
+        />
 
+        <!-- Phone pattern -->
         <label for="phone">Phone</label>
-        <input type="tel" id="phone" required />
+        <input 
+          type="tel" 
+          id="phone" 
+          pattern="^[0-9-+().\s]{10,15}$" 
+          required 
+        />
 
-        <label for="property-address">Property Address</label>
-        <input type="text" id="property-address" required />
+        <!-- Bedrooms & Bathrooms & sq ft -->
+        <label for="bedrooms">Bedrooms</label>
+        <input 
+          type="number" 
+          id="bedrooms" 
+          min="0" 
+          required
+        />
+
+        <label for="bathrooms">Bathrooms</label>
+        <input 
+          type="number" 
+          id="bathrooms" 
+          min="0" 
+          step="0.5" 
+          required
+        />
+
+        <label for="sqft">Approx. Square Footage</label>
+        <input 
+          type="number" 
+          id="sqft" 
+          min="0" 
+          required
+        />
+
+        <!-- Google Maps Autocomplete for property address -->
+        <label for="autocomplete">Property Address</label>
+        <input 
+          type="text" 
+          id="autocomplete" 
+          placeholder="Start typing your address..."
+          required
+        />
+
+        <!-- Optional referral field -->
+        <label for="referral">Referral Name / PreExisting Property Mgmt (Optional)</label>
+        <input 
+          type="text" 
+          id="referral"
+        />
 
         <label for="description">Description / Additional Info</label>
         <textarea id="description" rows="4"></textarea>
@@ -204,10 +294,48 @@
   </main>
 
   <footer>
-    <p>Phone: (123) 456-7890 | Email: info@zenoramgmt.com</p>
-    <p>Address: 1234 Luxury Lane, Suite 100, Metropolis, USA</p>
+    <p>Phone: 510-770-4237 | Email: 
+      <a class="email-link" href="mailto:zenoramgmt@gmail.com">
+        zenoramgmt@gmail.com
+      </a>
+    </p>
+    <p>Address: 1121 Tewa CT, Fremont CA 94539</p>
     <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
   </footer>
+
+  <script>
+    // GOOGLE MAPS AUTOCOMPLETE - simpler config so user can type multiple digits
+    let autocomplete;
+    function initAutocomplete() {
+      const input = document.getElementById('autocomplete');
+      autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'], // allows normal address typing
+        // Remove overly strict componentRestrictions 
+      });
+    }
+    // Initialize the autocomplete once DOM is ready
+    document.addEventListener('DOMContentLoaded', initAutocomplete);
+
+    // Pseudo "send email" on form submission
+    document.getElementById('listForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Gather data
+      const plan = document.getElementById('plan').value;
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const bedrooms = document.getElementById('bedrooms').value;
+      const bathrooms = document.getElementById('bathrooms').value;
+      const sqft = document.getElementById('sqft').value;
+      const address = document.getElementById('autocomplete').value;
+      const referral = document.getElementById('referral').value;
+      const desc = document.getElementById('description').value;
+
+      alert(`Listing submitted!\n\nPlan: ${plan}\nName: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nBedrooms: ${bedrooms}\nBaths: ${bathrooms}\nSqFt: ${sqft}\nAddress: ${address}\nReferral: ${referral}\nDescription: ${desc}\n\nThis data would be emailed to zenoramgmt@gmail.com.`);
+      this.reset();
+    });
+  </script>
 </body>
 </html>
 

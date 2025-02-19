@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Zenora MGMT - Services & Pricing</title>
 
   <!-- Google Fonts -->
@@ -14,31 +14,44 @@
   />
 
   <style>
-    html { scroll-behavior: smooth; }
+    /* RESET & GLOBAL */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      background-color: #f6f9fc;
-      color: #333;
+      background-color: #1a171d; /* Dark background */
+      color: #eee;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    a { color: #333; text-decoration: none; transition: color 0.3s; }
-    a:hover { color: #6a1b9a; }
-    ul { list-style: none; }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+    a {
+      color: #d4af37; /* gold accent */
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #fffbd2;
+    }
+    ul { list-style-type: none; }
 
-    /* HEADER & NAV */
+    /* HEADER */
     header {
-      background-color: #fff;
-      border-bottom: 1px solid #ccc;
+      background-color: #201d24;
+      border-bottom: 1px solid #5a416b;
       position: sticky;
-      top: 0; z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      top: 0; 
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     .nav-container {
-      max-width: 1200px; margin: 0 auto;
+      max-width: 1200px; 
+      margin: 0 auto;
       padding: 1rem;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
     }
     .nav-left img { height: 50px; border-radius: 8px; }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
@@ -48,12 +61,12 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #f8f8f8;
+      background: #2e2934;
       top: 100%;
       left: 0;
       min-width: 150px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
       z-index: 999;
       overflow: hidden;
     }
@@ -62,10 +75,10 @@
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #eee;
+      background-color: #5a416b;
     }
 
-    /* CONTAINER */
+    /* SERVICES CONTAINER */
     .services-container {
       max-width: 1200px;
       margin: 2rem auto;
@@ -74,7 +87,7 @@
     }
     .services-container h1 {
       font-size: 2rem;
-      color: #6a1b9a;
+      color: #ffd57e;
       margin-bottom: 1.5rem;
       font-family: 'Playfair Display', serif;
     }
@@ -87,10 +100,10 @@
       margin-top: 2rem;
     }
     .pricing-card {
-      background: #fff;
+      background: #201d24;
       border-radius: 10px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      border: 1px solid #5a416b;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
@@ -100,53 +113,62 @@
       font-family: 'Playfair Display', serif;
       font-size: 1.4rem;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: #fff;
     }
     .most-popular {
-      color: #6a1b9a;
+      color: #ffd57e;
       font-size: 0.9rem;
       margin-bottom: 1rem;
     }
-    .price {
-      font-size: 1.5rem;
-      color: #6a1b9a;
+    .price-line {
+      font-size: 1.1rem;
+      color: #ffd57e;
       margin: 0.5rem 0;
     }
     .pricing-card ul {
-      text-align: left;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
+      text-align: center;
+      margin: 1rem auto;
+      padding-left: 0;
     }
     .pricing-card li {
       margin: 0.4rem 0;
+      list-style-type: disc; 
+      list-style-position: inside;
     }
     .pricing-card button {
-      background-color: #6a1b9a;
-      color: #fff;
+      background-color: #d4af37;
+      color: #201d24;
       border: none;
       border-radius: 6px;
       padding: 0.7rem;
       cursor: pointer;
       transition: background-color 0.3s;
       margin-top: 1rem;
+      font-weight: 600;
     }
     .pricing-card button:hover {
-      background-color: #7b1fa2;
+      background-color: #fffbd2;
+      transform: translateY(-2px);
     }
 
     /* FOOTER */
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #ccc;
-      background-color: #fff;
+      border-top: 1px solid #5a416b;
+      background-color: #201d24;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #777;
+      color: #cbb6e0;
       margin: 0.2rem 0;
       font-size: 0.9rem;
     }
+    .email-link { 
+      color: #d4af37; 
+      text-decoration: underline; 
+    }
+
   </style>
 </head>
 <body>
@@ -184,14 +206,14 @@
         <div>
           <h2>ZenPlatinum</h2>
           <p class="most-popular">Most Popular</p>
-          <p class="price">$1999/year</p>
+          <p class="price-line">$1999/year</p>
           <ul>
-            <li>Professional photos with drone footage</li>
+            <li>Professional photos w/ drone footage</li>
             <li>End-to-end document service</li>
             <li>Live rental showings</li>
             <li>Marketing on 5+ platforms</li>
             <li>Sign on property</li>
-            <li>Tenant management (24hr)</li>
+            <li>Tenant mgmt (24hr)</li>
             <li>Tenant application service</li>
             <li>Lockbox for property</li>
           </ul>
@@ -205,7 +227,7 @@
       <div class="pricing-card">
         <div>
           <h2>ZenGold</h2>
-          <p class="price">$1488/year</p>
+          <p class="price-line">$1488/year</p>
           <ul>
             <li>Professional photos</li>
             <li>End-to-end document service</li>
@@ -213,7 +235,7 @@
             <li>Listing on Zillow, Trulia, HotPads</li>
             <li>Sign on property</li>
             <li>Tenant application service</li>
-            <li>Tenant management (48-72 hr)</li>
+            <li>Tenant mgmt (48-72 hr)</li>
             <li>Lockbox for property</li>
           </ul>
         </div>
@@ -222,11 +244,11 @@
         </button>
       </div>
 
-      <!-- Zen Prof Photos -->
+      <!-- ZenFlix -->
       <div class="pricing-card">
         <div>
-          <h2>Zen Prof Photos</h2>
-          <p class="price">$200</p>
+          <h2>ZenFlix</h2>
+          <p class="price-line">$200</p>
           <ul>
             <li>Photoshoot of property</li>
             <li>Editing of photos</li>
@@ -238,13 +260,21 @@
         </button>
       </div>
 
-      <!-- Referral / Coming from Another PM Company -->
+      <!-- Referral / Another PM Co. -->
       <div class="pricing-card">
         <div>
-          <h2>Referral / Another PM Co.</h2>
-          <p class="price">$1500 <small>(-$500 off)</small></p>
+          <h2>Referral / Coming From Another PM Company</h2>
+          <p class="price-line">$1999 - $500 off = $1499</p>
           <ul>
-            <li>Same as ZenPlatinum offerings</li>
+            <li><strong>All ZenPlatinum offerings:</strong></li>
+            <li>Professional photos w/ drone footage</li>
+            <li>End-to-end document service</li>
+            <li>Live rental showings</li>
+            <li>Marketing on 5+ platforms</li>
+            <li>Sign on property</li>
+            <li>Tenant mgmt (24hr)</li>
+            <li>Tenant application service</li>
+            <li>Lockbox for property</li>
           </ul>
         </div>
         <button onclick="window.location.href='list-your-home.html'">
@@ -252,15 +282,17 @@
         </button>
       </div>
     </div>
-
   </div>
 
   <footer>
-    <p>Phone: (123) 456-7890 | Email: info@zenoramgmt.com</p>
-    <p>Address: 1234 Luxury Lane, Suite 100, Metropolis, USA</p>
+    <p>Phone: 510-770-4237 | Email:
+      <a class="email-link" href="mailto:zenoramgmt@gmail.com">
+        zenoramgmt@gmail.com
+      </a>
+    </p>
+    <p>Address: 1121 Tewa CT, Fremont CA 94539</p>
     <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
   </footer>
-
 </body>
 </html>
 

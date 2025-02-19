@@ -14,50 +14,42 @@
   />
 
   <style>
-    /* SMOOTH SCROLL */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* RESET & GLOBAL */
+    /* GLOBAL RESET & FONTS */
     * {
-      margin: 0;
+      margin: 0; 
       padding: 0;
       box-sizing: border-box;
     }
+    html {
+      scroll-behavior: smooth;
+    }
     body {
-      background-color: #f6f9fc; /* Light, bright background */
-      color: #333;
+      background-color: #1a171d; /* Slightly lighter than pure black */
+      color: #eee;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
     h1, h2, h3 {
-      font-family: 'Playfair Display', serif; /* Fancier headings */
+      font-family: 'Playfair Display', serif;
     }
     a {
       text-decoration: none;
-      color: #333;
+      color: #d4af37; /* gold accent */
       transition: color 0.3s;
     }
     a:hover {
-      color: #6a1b9a;
+      color: #fffbd2;
     }
-    ul {
-      list-style-type: none;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
+    ul { list-style-type: none; }
 
-    /* HEADER & NAVBAR */
+    /* HEADER & NAV */
     header {
-      background-color: #ffffff;
-      border-bottom: 1px solid #ccc;
+      background-color: #201d24;
+      border-bottom: 1px solid #5a416b;
       position: sticky;
       top: 0;
       z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     .nav-container {
       max-width: 1200px;
@@ -76,10 +68,7 @@
       align-items: center;
       gap: 2rem;
     }
-    .nav-item {
-      position: relative;
-    }
-    /* Keep dropdown open if hovering on .nav-item or .dropdown itself */
+    .nav-item { position: relative; }
     .nav-item:hover .dropdown,
     .dropdown:hover {
       display: block;
@@ -87,24 +76,23 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #f8f8f8;
+      background: #2e2934;
       top: 100%;
       left: 0;
       min-width: 150px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
       z-index: 999;
-      overflow: hidden;
     }
     .dropdown li {
       padding: 0.5rem 1rem;
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #eee;
+      background-color: #5a416b;
     }
 
-    /* BUTTON STYLES */
+    /* BUTTONS */
     button {
       border: none;
       border-radius: 6px;
@@ -117,7 +105,7 @@
       transform: translateY(-2px);
     }
 
-    /* HERO SECTION */
+    /* HERO */
     .hero {
       position: relative;
       width: 100%;
@@ -127,12 +115,13 @@
       border-bottom-left-radius: 24px;
       border-bottom-right-radius: 24px;
       overflow: hidden;
+      margin-bottom: 2rem;
     }
     .hero-overlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.35);
+      background-color: rgba(0,0,0,0.35);
     }
     .hero-content {
       position: relative;
@@ -147,15 +136,24 @@
     .hero-content h1 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
+      color: #fff;
     }
     .hero-content p {
       font-size: 1.1rem;
       margin-bottom: 2rem;
     }
-    .hero-content button {
-      background-color: #6a1b9a;
-      color: #fff;
-      font-weight: 500;
+
+    /* TWIN BUTTONS */
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .button-row button {
+      background-color: #d4af37; /* gold accent */
+      color: #201d24;
+      font-weight: 600;
     }
 
     /* SLOGAN SECTION */
@@ -169,10 +167,10 @@
       font-family: 'Playfair Display', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
-      color: #444;
+      color: #d4af37;
     }
     .slogan-section p {
-      color: #555;
+      color: #ccc;
       max-width: 800px;
       margin: 0.5rem auto;
       line-height: 1.6;
@@ -184,7 +182,7 @@
       flex-wrap: wrap;
       align-items: center;
       max-width: 1200px;
-      margin: 3rem auto;
+      margin: 2rem auto;
       padding: 0 1rem;
       gap: 2rem;
     }
@@ -193,64 +191,38 @@
       min-width: 300px;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     }
     .about-content {
       flex: 1;
       min-width: 300px;
     }
     .about-content h2 {
-      color: #6a1b9a;
+      color: #d4af37;
       margin-bottom: 1rem;
       font-size: 1.8rem;
     }
     .about-content p {
-      color: #444;
-    }
-
-    /* SERVICES TEASER */
-    .services-teaser {
-      padding: 3rem 1rem;
-      text-align: center;
-      max-width: 1000px;
-      margin: 2rem auto;
-    }
-    .services-teaser h2 {
-      color: #6a1b9a;
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-    }
-    .services-teaser p {
-      max-width: 700px;
-      margin: 0 auto 2rem;
-      color: #444;
-      line-height: 1.6;
-    }
-    .services-teaser a {
-      background-color: #6a1b9a;
-      color: #fff;
-      padding: 0.7rem 1.4rem;
-      border-radius: 6px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      transition: background-color 0.3s;
-    }
-    .services-teaser a:hover {
-      background-color: #7b1fa2;
+      color: #ddd;
     }
 
     /* FOOTER */
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #ccc;
-      background-color: #fff;
+      border-top: 1px solid #5a416b;
+      background-color: #201d24;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #777;
+      color: #cbb6e0;
       margin: 0.2rem 0;
       font-size: 0.9rem;
+    }
+    /* Make email clickable */
+    .email-link {
+      color: #d4af37;
+      text-decoration: underline;
     }
 
     /* RESPONSIVE */
@@ -302,11 +274,18 @@
     <div class="hero-content">
       <h1>Zenora MGMT Real Estate</h1>
       <p>Luxury and Efficiency, Driven by AI and Crafted for Modern Property Owners.</p>
-      <button onclick="window.location.href='rent-analysis.html'">Free AI Rent Analysis</button>
+      <div class="button-row">
+        <button onclick="window.location.href='list-your-home.html'">
+          List Your Home With Us
+        </button>
+        <button onclick="window.location.href='rent-analysis.html'">
+          Free AI Rent Analysis
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- SLOGAN SECTION -->
+  <!-- SLOGAN -->
   <section class="slogan-section">
     <h2>Transforming Property Management with AI</h2>
     <p>
@@ -336,26 +315,18 @@
     </div>
   </section>
 
-  <!-- SERVICES TEASER -->
-  <section class="services-teaser">
-    <h2>Explore Our Services</h2>
-    <p>
-      From drone photography to AI-driven rent analysis, we offer a 
-      comprehensive range of services to meet every property owner's needs.
-    </p>
-    <a href="services.html">View All Services & Plans</a>
-  </section>
-
   <!-- FOOTER -->
   <footer>
-    <p>Phone: (123) 456-7890 | Email: info@zenoramgmt.com</p>
-    <p>Address: 1234 Luxury Lane, Suite 100, Metropolis, USA</p>
+    <p>Phone: 510-770-4237 | Email:
+      <a class="email-link" href="mailto:zenoramgmt@gmail.com">
+        zenoramgmt@gmail.com
+      </a>
+    </p>
+    <p>Address: 1121 Tewa CT, Fremont CA 94539</p>
     <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
   </footer>
+
 </body>
 </html>
-
-
-
 
 
