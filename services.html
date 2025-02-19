@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zenora MGMT - Services</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Zenora MGMT - Services & Pricing</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -17,32 +17,28 @@
     html { scroll-behavior: smooth; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #222;
-      color: #ddd;
+      background-color: #f6f9fc;
+      color: #333;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    a { color: #fff; text-decoration: none; transition: color 0.3s; }
-    a:hover { color: #f3e0ff; }
-    ul { list-style-type: none; }
+    a { color: #333; text-decoration: none; transition: color 0.3s; }
+    a:hover { color: #6a1b9a; }
+    ul { list-style: none; }
 
-    /* HEADER & NAV (same as index) */
+    /* HEADER & NAV */
     header {
-      background-color: #222;
-      border-bottom: 1px solid #7b1fa2;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
       position: sticky;
-      top: 0;
-      z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      top: 0; z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 1200px; margin: 0 auto;
       padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .nav-left img { height: 50px; border-radius: 8px; }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
@@ -52,12 +48,12 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #2e1d3c;
+      background: #f8f8f8;
       top: 100%;
       left: 0;
-      min-width: 160px;
-      border: 1px solid #7b1fa2;
-      border-radius: 6px;
+      min-width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       z-index: 999;
       overflow: hidden;
     }
@@ -66,55 +62,94 @@
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #7b1fa2;
+      background-color: #eee;
     }
 
+    /* CONTAINER */
     .services-container {
-      max-width: 1000px;
-      margin: 3rem auto;
+      max-width: 1200px;
+      margin: 2rem auto;
       padding: 1rem;
-    }
-    h1 {
-      color: #f6eafe;
       text-align: center;
-      margin-bottom: 2rem;
-      font-family: 'Playfair Display', serif;
-      text-transform: uppercase;
     }
-    .service-item {
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background-color: #2a1f38;
+    .services-container h1 {
+      font-size: 2rem;
+      color: #6a1b9a;
+      margin-bottom: 1.5rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* 4-COLUMN PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .pricing-card {
+      background: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .service-item h2 {
-      margin-bottom: 1rem;
-      color: #e5c6ff;
+    .pricing-card h2 {
       font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: #333;
     }
-    .service-item p {
-      line-height: 1.6;
-      color: #ccc;
+    .most-popular {
+      color: #6a1b9a;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .price {
+      font-size: 1.5rem;
+      color: #6a1b9a;
+      margin: 0.5rem 0;
+    }
+    .pricing-card ul {
+      text-align: left;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    .pricing-card li {
+      margin: 0.4rem 0;
+    }
+    .pricing-card button {
+      background-color: #6a1b9a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.7rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 1rem;
+    }
+    .pricing-card button:hover {
+      background-color: #7b1fa2;
     }
 
     /* FOOTER */
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #7b1fa2;
-      background-color: #222;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #bbb;
+      color: #777;
       margin: 0.2rem 0;
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-
   <!-- HEADER -->
   <header>
     <div class="nav-container">
@@ -141,27 +176,83 @@
   </header>
 
   <div class="services-container">
-    <h1>Our Services</h1>
+    <h1>Our Plans & Pricing</h1>
 
-    <div class="service-item">
-      <h2>Full-Service Property Management</h2>
-      <p>
-        We handle everything from marketing your property and finding
-        reliable tenants to managing day-to-day maintenance requests.
-        Enjoy peace of mind while we maximize your rental income.
-      </p>
+    <div class="pricing-grid">
+      <!-- ZenPlatinum -->
+      <div class="pricing-card">
+        <div>
+          <h2>ZenPlatinum</h2>
+          <p class="most-popular">Most Popular</p>
+          <p class="price">$1999/year</p>
+          <ul>
+            <li>Professional photos with drone footage</li>
+            <li>End-to-end document service</li>
+            <li>Live rental showings</li>
+            <li>Marketing on 5+ platforms</li>
+            <li>Sign on property</li>
+            <li>Tenant management (24hr)</li>
+            <li>Tenant application service</li>
+            <li>Lockbox for property</li>
+          </ul>
+        </div>
+        <button onclick="window.location.href='list-your-home.html'">
+          Select
+        </button>
+      </div>
+
+      <!-- ZenGold -->
+      <div class="pricing-card">
+        <div>
+          <h2>ZenGold</h2>
+          <p class="price">$1488/year</p>
+          <ul>
+            <li>Professional photos</li>
+            <li>End-to-end document service</li>
+            <li>Lockbox rental showings (not live)</li>
+            <li>Listing on Zillow, Trulia, HotPads</li>
+            <li>Sign on property</li>
+            <li>Tenant application service</li>
+            <li>Tenant management (48-72 hr)</li>
+            <li>Lockbox for property</li>
+          </ul>
+        </div>
+        <button onclick="window.location.href='list-your-home.html'">
+          Select
+        </button>
+      </div>
+
+      <!-- Zen Prof Photos -->
+      <div class="pricing-card">
+        <div>
+          <h2>Zen Prof Photos</h2>
+          <p class="price">$200</p>
+          <ul>
+            <li>Photoshoot of property</li>
+            <li>Editing of photos</li>
+            <li>Up to 30 photos</li>
+          </ul>
+        </div>
+        <button onclick="window.location.href='list-your-home.html'">
+          Select
+        </button>
+      </div>
+
+      <!-- Referral / Coming from Another PM Company -->
+      <div class="pricing-card">
+        <div>
+          <h2>Referral / Another PM Co.</h2>
+          <p class="price">$1500 <small>(-$500 off)</small></p>
+          <ul>
+            <li>Same as ZenPlatinum offerings</li>
+          </ul>
+        </div>
+        <button onclick="window.location.href='list-your-home.html'">
+          Select
+        </button>
+      </div>
     </div>
 
-    <div class="service-item">
-      <h2>Pricing & Special Offers</h2>
-      <p>
-        - Base price: <strong>$1,999/year</strong> (Limited-Time Special)<br/>
-        - Referral Discount: <strong>$500 off/year</strong><br/>
-        - Switching from another Property Management company?
-          <strong>$500 off/year</strong><br/>
-      </p>
-    </div>
-    <!-- Add more services as needed -->
   </div>
 
   <footer>

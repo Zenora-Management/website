@@ -17,24 +17,31 @@
     html { scroll-behavior: smooth; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #222;
-      color: #ddd;
+      background-color: #f6f9fc;
+      color: #333;
       margin:0;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    a { color: #fff; text-decoration: none; transition: color 0.3s; }
-    a:hover { color: #f3e0ff; }
+    a {
+      color: #333;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #6a1b9a;
+    }
     ul { list-style-type: none; }
 
+    /* HEADER */
     header {
-      background-color: #222;
-      border-bottom: 1px solid #7b1fa2;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
       position: sticky;
       top: 0;
       z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .nav-container {
       max-width: 1200px;
@@ -52,12 +59,12 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #2e1d3c;
+      background: #f8f8f8;
       top: 100%;
       left: 0;
-      min-width: 160px;
-      border: 1px solid #7b1fa2;
-      border-radius: 6px;
+      min-width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       z-index: 999;
       overflow: hidden;
     }
@@ -66,27 +73,28 @@
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #7b1fa2;
+      background-color: #eee;
     }
 
+    /* MAIN */
     .list-container {
       max-width: 600px;
       margin: 3rem auto;
       padding: 2rem;
-      background-color: #2a1f38;
+      background-color: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     h1 {
       text-align: center;
       margin-bottom: 1rem;
-      color: #f6eafe;
+      color: #6a1b9a;
       font-family: 'Playfair Display', serif;
     }
     p {
       text-align: center;
       margin-bottom: 1rem;
-      color: #ccc;
+      color: #555;
     }
     form {
       display: flex;
@@ -96,20 +104,21 @@
     label {
       margin-top: 1rem;
       font-weight: 500;
+      color: #444;
     }
-    input, textarea {
+    input, select, textarea {
       padding: 0.7rem;
       margin-top: 0.3rem;
-      border: 1px solid #7b1fa2;
+      border: 1px solid #ccc;
       border-radius: 6px;
-      background-color: #3b2d50;
-      color: #fff;
+      background-color: #f8f8f8;
+      color: #333;
       font-family: 'Poppins', sans-serif;
     }
     button {
       margin-top: 1.5rem;
       padding: 0.8rem;
-      background-color: #7b1fa2;
+      background-color: #6a1b9a;
       border: none;
       border-radius: 6px;
       color: #fff;
@@ -117,19 +126,19 @@
       transition: background-color 0.3s, transform 0.3s;
     }
     button:hover {
-      background-color: #9c4dcc;
+      background-color: #7b1fa2;
       transform: translateY(-2px);
     }
 
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #7b1fa2;
-      background-color: #222;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #bbb;
+      color: #777;
       margin: 0.2rem 0;
       font-size: 0.9rem;
     }
@@ -165,6 +174,15 @@
       <h1>List Your Home With Us</h1>
       <p>Provide details below and we'll get back to you within 24 hours!</p>
       <form>
+        <label for="plan">Which Plan are you interested in?</label>
+        <select id="plan" required>
+          <option value="" disabled selected>Select a Plan...</option>
+          <option value="ZenPlatinum">$1999/year (ZenPlatinum)</option>
+          <option value="ZenGold">$1488/year (ZenGold)</option>
+          <option value="ZenProfPhotos">$200 (Zen Prof Photos)</option>
+          <option value="Referral/AnotherPM">$1500 - $500 off (Referral)</option>
+        </select>
+
         <label for="name">Name</label>
         <input type="text" id="name" required />
 

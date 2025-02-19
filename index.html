@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zenora MGMT Real Estate - Luxury Property Management</title>
+  <title>Zenora MGMT - AI-Driven Property Management</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -19,28 +19,28 @@
       scroll-behavior: smooth;
     }
 
-    /* RESET & GLOBAL FONTS */
+    /* RESET & GLOBAL */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
     body {
-      background-color: #222; /* Lighter than pure black */
-      color: #ddd;
+      background-color: #f6f9fc; /* Light, bright background */
+      color: #333;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
-    h1, h2, h3, h4 {
-      font-family: 'Playfair Display', serif;
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif; /* Fancier headings */
     }
     a {
       text-decoration: none;
-      color: #fff;
+      color: #333;
       transition: color 0.3s;
     }
     a:hover {
-      color: #f3e0ff; /* subtle hover color */
+      color: #6a1b9a;
     }
     ul {
       list-style-type: none;
@@ -52,12 +52,12 @@
 
     /* HEADER & NAVBAR */
     header {
-      background-color: #222;
-      border-bottom: 1px solid #7b1fa2;
+      background-color: #ffffff;
+      border-bottom: 1px solid #ccc;
       position: sticky;
       top: 0;
       z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .nav-container {
       max-width: 1200px;
@@ -79,7 +79,7 @@
     .nav-item {
       position: relative;
     }
-    /* Keep dropdown open if hovering on .nav-item OR .dropdown itself */
+    /* Keep dropdown open if hovering on .nav-item or .dropdown itself */
     .nav-item:hover .dropdown,
     .dropdown:hover {
       display: block;
@@ -87,12 +87,12 @@
     .dropdown {
       display: none;
       position: absolute;
-      background: #2e1d3c; 
-      top: 100%; /* place directly below the nav link */
+      background: #f8f8f8;
+      top: 100%;
       left: 0;
-      min-width: 160px;
-      border: 1px solid #7b1fa2;
-      border-radius: 6px;
+      min-width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       z-index: 999;
       overflow: hidden;
     }
@@ -101,14 +101,14 @@
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #7b1fa2;
+      background-color: #eee;
     }
 
-    /* BUTTON / GENERAL */
+    /* BUTTON STYLES */
     button {
       border: none;
       border-radius: 6px;
-      padding: 0.8rem 1.5rem;
+      padding: 0.8rem 1.2rem;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
       font-family: 'Poppins', sans-serif;
@@ -121,43 +121,61 @@
     .hero {
       position: relative;
       width: 100%;
-      height: 70vh;
-      background: url('https://images.unsplash.com/photo-1593062091628-98c49f5d5b68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1650&q=80')
+      height: 60vh;
+      background: url('https://images.unsplash.com/photo-1600573471772-4433e71edd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80')
         center center/cover no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
       overflow: hidden;
     }
     .hero-overlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.35);
     }
     .hero-content {
       position: relative;
       z-index: 2;
       max-width: 700px;
-      padding: 1rem;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+      color: #fff;
+      margin-top: 5vh;
     }
     .hero-content h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 1rem;
-      color: #fff;
     }
     .hero-content p {
-      margin-bottom: 1.5rem;
       font-size: 1.1rem;
-      color: #eaeaea;
+      margin-bottom: 2rem;
     }
     .hero-content button {
-      background-color: #fff;
-      color: #7b1fa2;
+      background-color: #6a1b9a;
+      color: #fff;
       font-weight: 500;
+    }
+
+    /* SLOGAN SECTION */
+    .slogan-section {
+      text-align: center;
+      padding: 2rem 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .slogan-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #444;
+    }
+    .slogan-section p {
+      color: #555;
+      max-width: 800px;
+      margin: 0.5rem auto;
+      line-height: 1.6;
     }
 
     /* ABOUT SECTION */
@@ -175,62 +193,19 @@
       min-width: 300px;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .about-content {
       flex: 1;
       min-width: 300px;
     }
     .about-content h2 {
-      color: #e2c5f0;
+      color: #6a1b9a;
       margin-bottom: 1rem;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
     .about-content p {
-      color: #ddd;
-    }
-
-    /* MAP & CITIES SECTION (replaces property search) */
-    .map-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      align-items: center;
-      border-radius: 16px;
-    }
-    .map-image {
-      flex: 1;
-      min-width: 300px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-    .map-image img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .cities-list {
-      flex: 1;
-      min-width: 300px;
-    }
-    .cities-list h2 {
-      font-family: 'Playfair Display', serif;
-      color: #e2c5f0;
-      margin-bottom: 1rem;
-      font-size: 2rem;
-    }
-    .cities-list ul {
-      margin-top: 1rem;
-      list-style-type: disc;
-      margin-left: 1.5rem;
-    }
-    .cities-list li {
-      margin-bottom: 0.5rem;
-      color: #ddd;
+      color: #444;
     }
 
     /* SERVICES TEASER */
@@ -241,18 +216,18 @@
       margin: 2rem auto;
     }
     .services-teaser h2 {
-      color: #e2c5f0;
+      color: #6a1b9a;
       margin-bottom: 1rem;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
     .services-teaser p {
       max-width: 700px;
       margin: 0 auto 2rem;
-      color: #ddd;
+      color: #444;
       line-height: 1.6;
     }
     .services-teaser a {
-      background-color: #7b1fa2;
+      background-color: #6a1b9a;
       color: #fff;
       padding: 0.7rem 1.4rem;
       border-radius: 6px;
@@ -261,19 +236,19 @@
       transition: background-color 0.3s;
     }
     .services-teaser a:hover {
-      background-color: #9c4dcc;
+      background-color: #7b1fa2;
     }
 
     /* FOOTER */
     footer {
-      margin-top: 3rem; /* consistent spacing from content */
-      border-top: 1px solid #7b1fa2;
-      background-color: #222;
+      margin-top: 3rem;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #bbb;
+      color: #777;
       margin: 0.2rem 0;
       font-size: 0.9rem;
     }
@@ -288,8 +263,8 @@
         max-width: 500px;
         margin: 0 auto;
       }
-      .map-section {
-        flex-direction: column;
+      .hero {
+        height: 50vh;
       }
     }
   </style>
@@ -326,74 +301,61 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1>Zenora MGMT Real Estate</h1>
-      <p>Excellence in Property Management. Luxury, Efficiency, and Innovation at Your Fingertips.</p>
+      <p>Luxury and Efficiency, Driven by AI and Crafted for Modern Property Owners.</p>
       <button onclick="window.location.href='rent-analysis.html'">Free AI Rent Analysis</button>
     </div>
+  </section>
+
+  <!-- SLOGAN SECTION -->
+  <section class="slogan-section">
+    <h2>Transforming Property Management with AI</h2>
+    <p>
+      At Zenora MGMT, we harness the power of artificial intelligence 
+      to streamline every stage of renting and managing your property—
+      saving you time, maximizing returns, and delighting your tenants.
+    </p>
   </section>
 
   <!-- ABOUT SECTION -->
   <section class="about-section">
     <div class="about-image">
-      <img src="https://images.unsplash.com/photo-1600573471772-4433e71edd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-           alt="Luxury living room" />
+      <img 
+        src="https://images.unsplash.com/photo-1600573471772-4433e71edd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+        alt="Luxurious interior" 
+      />
     </div>
     <div class="about-content">
       <h2>Our Story</h2>
       <p>
-        Zenora MGMT Real Estate was founded with a passion for providing
-        unparalleled property management services. With years of industry
-        expertise, we pride ourselves on delivering exceptional results and
-        ensuring every client feels like a VIP. Whether you own a single rental
-        or a vast property portfolio, our team is here to streamline the process 
-        and maximize your returns.
+        Zenora MGMT Real Estate was founded with a passion for delivering 
+        top-tier property management services. Combining industry expertise 
+        with cutting-edge AI tools, we ensure every client feels like a VIP. 
+        Whether you own a single rental or a diverse portfolio, our solutions 
+        are designed to simplify your life and maximize profitability.
       </p>
-    </div>
-  </section>
-
-  <!-- MAP OF CALIFORNIA & CITIES LIST -->
-  <section class="map-section">
-    <div class="map-image">
-      <!-- Replace with actual map or embed if you prefer -->
-      <img 
-        src="https://upload.wikimedia.org/wikipedia/commons/0/01/Map_of_California_highlighting_major_cities.png"
-        alt="Map of California" 
-      />
-    </div>
-    <div class="cities-list">
-      <h2>Areas We Cover</h2>
-      <p>We specialize in property management across these major California regions:</p>
-      <ul>
-        <li>San Francisco</li>
-        <li>San Jose</li>
-        <li>Oakland</li>
-        <li>Fremont</li>
-        <li>Santa Clara</li>
-        <li>Sunnyvale</li>
-        <li>Berkeley</li>
-        <!-- Add more as needed -->
-      </ul>
     </div>
   </section>
 
   <!-- SERVICES TEASER -->
   <section class="services-teaser">
-    <h2>Our Services</h2>
+    <h2>Explore Our Services</h2>
     <p>
-      From personalized property management plans to high-tech rent analysis,
-      we provide a comprehensive solution to maximize your rental income
-      and keep your tenants satisfied.
+      From drone photography to AI-driven rent analysis, we offer a 
+      comprehensive range of services to meet every property owner's needs.
     </p>
-    <a href="services.html">View All Services</a>
+    <a href="services.html">View All Services & Plans</a>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <p>Phone: (123) 456-7890 &nbsp; | &nbsp; Email: info@zenoramgmt.com</p>
+    <p>Phone: (123) 456-7890 | Email: info@zenoramgmt.com</p>
     <p>Address: 1234 Luxury Lane, Suite 100, Metropolis, USA</p>
     <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
   </footer>
-
 </body>
 </html>
+
+
+
 
 

@@ -17,100 +17,112 @@
     html { scroll-behavior: smooth; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #222;
-      color: #ddd;
-      margin:0;
+      background-color: #f6f9fc;
+      color: #333;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
     }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    a { color: #fff; text-decoration: none; transition: color 0.3s; }
-    a:hover { color: #f3e0ff; }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+    a {
+      color: #333;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #6a1b9a;
+    }
     ul { list-style-type: none; }
 
+    /* HEADER */
     header {
-      background-color: #222;
-      border-bottom: 1px solid #7b1fa2;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
       position: sticky;
       top: 0;
       z-index:999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .nav-container {
-      max-width: 1200px; 
+      max-width: 1200px;
       margin: 0 auto;
       padding: 1rem;
-      display: flex; 
-      justify-content: space-between; 
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
-    .nav-left img { height: 50px; border-radius: 8px; }
-    .nav-right { display: flex; gap: 2rem; }
+    .nav-left img {
+      height: 50px;
+      border-radius: 8px;
+    }
+    .nav-right { display: flex; gap: 2rem; align-items: center; }
     .nav-item { position: relative; }
     .nav-item:hover .dropdown,
     .dropdown:hover { display: block; }
     .dropdown {
-      display: none; 
-      position: absolute; 
-      background: #2e1d3c; 
-      top: 100%; 
-      left: 0; 
-      min-width: 160px;
-      border: 1px solid #7b1fa2; 
-      border-radius: 6px; 
+      display: none;
+      position: absolute;
+      background: #f8f8f8;
+      top: 100%;
+      left: 0;
+      min-width: 150px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       z-index: 999;
-      overflow: hidden;
     }
     .dropdown li {
       padding: 0.5rem 1rem;
       transition: background-color 0.3s;
     }
     .dropdown li:hover {
-      background-color: #7b1fa2;
+      background-color: #eee;
     }
 
+    /* FAQ CONTAINER */
     .faq-container {
       max-width: 800px;
       margin: 3rem auto;
       padding: 1rem;
-      background-color: #2a1f38;
+      background-color: #fff;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     h1 {
       text-align: center;
-      color: #f6eafe;
+      color: #6a1b9a;
       margin-bottom: 2rem;
       font-family: 'Playfair Display', serif;
     }
     .faq-item {
       margin-bottom: 1.5rem;
       padding: 1rem;
-      border: 1px solid #7b1fa2;
-      border-radius: 8px;
-      background-color: #3b2d50;
+      border-radius: 6px;
+      background-color: #f8f8f8;
+      border: 1px solid #ccc;
     }
     .faq-item h2 {
-      color: #e5c6ff;
+      color: #333;
       margin-bottom: 0.5rem;
       font-size: 1.2rem;
       font-family: 'Playfair Display', serif;
     }
     .faq-item p {
-      color: #ccc;
+      color: #555;
       font-size: 0.95rem;
       line-height: 1.5;
     }
 
+    /* FOOTER */
     footer {
       margin-top: 3rem;
-      border-top: 1px solid #7b1fa2;
-      background-color: #222;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
       padding: 1.5rem 1rem;
       text-align: center;
     }
     footer p {
-      color: #bbb;
+      color: #777;
       margin: 0.2rem 0;
       font-size: 0.9rem;
     }
@@ -118,11 +130,13 @@
 </head>
 <body>
 
-  <!-- HEADER / NAV -->
+  <!-- HEADER -->
   <header>
     <div class="nav-container">
       <div class="nav-left">
-        <a href="index.html"><img src="zenoralogo.png" alt="Zenora MGMT Logo"/></a>
+        <a href="index.html">
+          <img src="zenoralogo.png" alt="Zenora MGMT Logo"/>
+        </a>
       </div>
       <ul class="nav-right">
         <li><a href="index.html">Home</a></li>
@@ -148,29 +162,30 @@
       <div class="faq-item">
         <h2>How quickly can you find tenants?</h2>
         <p>
-          Typically within 2-4 weeks, depending on market demand and location. 
-          Our screening process ensures reliable, quality tenants.
+          Typically within 2-4 weeks, depending on market demand 
+          and location. Our screening process ensures reliable tenants.
         </p>
       </div>
 
       <div class="faq-item">
         <h2>What is the Free AI Rent Analysis?</h2>
         <p>
-          Our advanced algorithm evaluates market data and comparable properties 
-          to give you the best rental price recommendation—absolutely free!
+          Our advanced AI technology evaluates market data and comparable 
+          properties to provide the best rental price recommendation, 
+          absolutely free.
         </p>
       </div>
 
       <div class="faq-item">
         <h2>How do your discounts work?</h2>
         <p>
-          We offer $500 off yearly fees for referrals or if you’re switching from 
-          another property management company, on top of our $1,999/year special.
+          We offer $500 off yearly fees for referrals or if you’re coming 
+          from another property management company—applied on top of our 
+          $1,999/year special.
         </p>
       </div>
 
       <!-- More FAQ items if needed -->
-
     </div>
   </main>
 
