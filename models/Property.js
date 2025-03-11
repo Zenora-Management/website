@@ -9,12 +9,17 @@ const propertySchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['House', 'Apartment', 'Condo', 'Townhouse']
+        enum: ['House', 'Apartment', 'Condo', 'Townhouse', 'Other']
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    status: {
+        type: String,
+        enum: ['Active', 'Pending', 'Inactive'],
+        default: 'Active'
     },
     tenant: {
         name: String,
@@ -56,10 +61,45 @@ const propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Document'
     }],
+    image: {
+        type: String,
+        default: null
+    },
+    details: {
+        bedrooms: {
+            type: Number,
+            default: 0
+        },
+        bathrooms: {
+            type: Number,
+            default: 0
+        },
+        squareFeet: {
+            type: Number,
+            default: 0
+        }
+    },
     createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = mongoose.model('Property', propertySchema); 
+// Update the updatedAt timestamp before saving
+propertySchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+// Add method to check if user has access to property
+propertySchema.methods.canAccess = function(userId) {
+    return this.owner.equals(userId);
+};
+
+const Property = mongoose.model('Property', propertySchema);
+
+module.exports = Property; 

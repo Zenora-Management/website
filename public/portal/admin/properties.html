@@ -8,85 +8,62 @@
     <link rel="stylesheet" href="../../css/admin.css">
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
     <style>
-        /* Inherit admin dashboard styles */
-        .admin-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            min-height: 100vh;
-        }
-
-        .admin-sidebar {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            position: fixed;
-            width: 250px;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .admin-sidebar .logo {
-            display: block;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .admin-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .admin-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .admin-nav-item:hover,
-        .admin-nav-item.active {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-        }
-
-        .admin-nav-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .admin-main {
-            padding: 2rem;
-            margin-left: 250px;
-        }
-
-        .properties-grid {
+        /* Properties specific styles */
+        .property-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
-            margin-top: 1rem;
+            margin-top: 2rem;
         }
 
         .property-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
         }
 
         .property-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .property-status.active {
+            color: #4CAF50;
+        }
+
+        .property-status.pending {
+            color: #FFC107;
+        }
+
+        .property-content {
+            padding: 1.5rem;
         }
 
         .property-header {
@@ -96,95 +73,187 @@
             margin-bottom: 1rem;
         }
 
-        .property-title {
+        .property-title h3 {
             margin: 0;
-            font-size: 1.25rem;
             color: var(--text-primary);
+            font-size: 1.1rem;
         }
 
-        .property-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-occupied {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .status-vacant {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .property-details {
-            margin-top: 1rem;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-
-        .property-detail {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .property-title p {
+            margin: 0.25rem 0 0;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
 
         .property-actions {
-            margin-top: 1.5rem;
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
-        .property-action {
-            padding: 0.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: none;
+        .property-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .search-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
             color: var(--text-secondary);
         }
 
-        .property-action:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.1);
+        .filter-button {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .property-action svg {
+        .filter-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .action-button {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .action-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .documents-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .documents-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .documents-header h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .document-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .document-icon svg {
             width: 16px;
             height: 16px;
+            color: var(--text-secondary);
+        }
+
+        .document-name {
+            font-size: 0.8rem;
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg"></div>
-
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <a href="dashboard.html" class="logo">Zenora Admin</a>
+            <a href="../../index.html" class="logo">Zenora MGMT</a>
+            
+            <!-- Admin Team Section -->
+            <div class="admin-team">
+                <h3>
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Admin Team
+                </h3>
+                <div class="admin-list" id="adminList">
+                    <!-- Admin list will be populated dynamically -->
+                </div>
+            </div>
+
             <nav class="admin-nav">
                 <a href="dashboard.html" class="admin-nav-item">
                     <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                     Dashboard
                 </a>
-                <a href="users.html" class="admin-nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Users
+                <a href="clients.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    Clients
                 </a>
                 <a href="properties.html" class="admin-nav-item active">
                     <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
                     Properties
-                </a>
-                <a href="messages.html" class="admin-nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                    Messages
                 </a>
                 <a href="#" class="admin-nav-item" id="logoutButton">
                     <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
@@ -196,312 +265,183 @@
         <!-- Main Content -->
         <main class="admin-main">
             <div class="admin-header">
-                <h1>Properties Management</h1>
-                <button class="btn btn-primary" id="addPropertyBtn">Add Property</button>
+                <h1>Properties</h1>
             </div>
 
-            <div class="properties-grid" id="propertiesGrid">
-                <div class="loading">Loading properties...</div>
+            <!-- Search and Filter -->
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search properties..." id="searchInput">
+                <button class="filter-button">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                    </svg>
+                    Filter
+                </button>
+            </div>
+
+            <!-- Property Grid -->
+            <div class="property-grid" id="propertyGrid">
+                <!-- Property cards will be populated here -->
             </div>
         </main>
     </div>
 
-    <!-- Add/Edit Property Modal -->
-    <div class="modal" id="propertyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add Property</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <form id="propertyForm">
-                <div class="form-group">
-                    <label class="form-label" for="propertyAddress">Address</label>
-                    <input type="text" id="propertyAddress" name="address" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertyType">Type</label>
-                    <select id="propertyType" name="type" class="form-control" required>
-                        <option value="House">House</option>
-                        <option value="Apartment">Apartment</option>
-                        <option value="Condo">Condo</option>
-                        <option value="Townhouse">Townhouse</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertyBedrooms">Bedrooms</label>
-                    <input type="number" id="propertyBedrooms" name="bedrooms" class="form-control" required min="0">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertyBathrooms">Bathrooms</label>
-                    <input type="number" id="propertyBathrooms" name="bathrooms" class="form-control" required min="0" step="0.5">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertySqft">Square Footage</label>
-                    <input type="number" id="propertySqft" name="sqft" class="form-control" required min="0">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertyRent">Monthly Rent</label>
-                    <input type="number" id="propertyRent" name="rent" class="form-control" required min="0">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="propertyOwner">Owner</label>
-                    <select id="propertyOwner" name="userId" class="form-control" required>
-                        <option value="">Select Owner</option>
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="../../js/admin.js"></script>
     <script>
-        class PropertiesManager extends AdminPortal {
-            constructor() {
-                super();
-                this.setupEventListeners();
-                this.loadProperties();
-                this.loadUsers();
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!token || user.role !== 'admin') {
+                window.location.href = '/auth/login.html';
+                return;
             }
 
-            setupEventListeners() {
-                const addPropertyBtn = document.getElementById('addPropertyBtn');
-                const propertyModal = document.getElementById('propertyModal');
-                const propertyForm = document.getElementById('propertyForm');
-                const closeBtn = propertyModal.querySelector('.modal-close');
-                const cancelBtn = propertyModal.querySelector('[data-dismiss="modal"]');
-
-                addPropertyBtn.addEventListener('click', () => this.showModal());
-                closeBtn.addEventListener('click', () => this.hideModal());
-                cancelBtn.addEventListener('click', () => this.hideModal());
-                propertyForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            // Populate admin list
+            if (user.adminEmails) {
+                const adminList = document.getElementById('adminList');
+                user.adminEmails.forEach(email => {
+                    const adminItem = document.createElement('div');
+                    adminItem.className = 'admin-item';
+                    
+                    const initials = email.split('@')[0].substring(0, 2).toUpperCase();
+                    
+                    adminItem.innerHTML = `
+                        <div class="admin-avatar">${initials}</div>
+                        <div class="admin-info">
+                            <div class="name">${email.split('@')[0]}</div>
+                            <div class="email">${email}</div>
+                        </div>
+                        <div class="admin-status ${email === user.email ? '' : 'offline'}"></div>
+                    `;
+                    adminList.appendChild(adminItem);
+                });
             }
 
-            showModal(propertyData = null) {
-                const modal = document.getElementById('propertyModal');
-                const form = document.getElementById('propertyForm');
-                const title = modal.querySelector('.modal-title');
-
-                if (propertyData) {
-                    title.textContent = 'Edit Property';
-                    form.elements.address.value = propertyData.address;
-                    form.elements.type.value = propertyData.type;
-                    form.elements.bedrooms.value = propertyData.bedrooms;
-                    form.elements.bathrooms.value = propertyData.bathrooms;
-                    form.elements.sqft.value = propertyData.sqft;
-                    form.elements.rent.value = propertyData.rent;
-                    form.elements.userId.value = propertyData.owner.id;
-                    form.dataset.propertyId = propertyData.id;
-                } else {
-                    title.textContent = 'Add Property';
-                    form.reset();
-                    delete form.dataset.propertyId;
-                }
-
-                modal.classList.add('active');
-            }
-
-            hideModal() {
-                const modal = document.getElementById('propertyModal');
-                modal.classList.remove('active');
-            }
-
-            async handleFormSubmit(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const propertyData = Object.fromEntries(formData);
-
-                try {
-                    if (form.dataset.propertyId) {
-                        await this.updateProperty(form.dataset.propertyId, propertyData);
-                    } else {
-                        await this.createProperty(propertyData);
-                    }
-
-                    this.hideModal();
-                    await this.loadProperties();
-                } catch (error) {
-                    console.error('Error saving property:', error);
-                    alert('Error saving property. Please try again.');
-                }
-            }
-
-            async loadUsers() {
-                try {
-                    const response = await fetch('/api/admin/users', {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to load users');
-                    }
-
-                    const data = await response.json();
-                    this.populateOwnerSelect(data.users);
-                } catch (error) {
-                    console.error('Error loading users:', error);
-                }
-            }
-
-            populateOwnerSelect(users) {
-                const select = document.getElementById('propertyOwner');
-                const options = users.map(user => 
-                    `<option value="${user.id}">${user.name} (${user.email})</option>`
-                );
-                select.innerHTML = '<option value="">Select Owner</option>' + options.join('');
-            }
-
-            async createProperty(propertyData) {
+            // Fetch and display properties
+            try {
                 const response = await fetch('/api/admin/properties', {
-                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.token}`
-                    },
-                    body: JSON.stringify(propertyData)
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to create property');
+                    throw new Error('Failed to fetch properties');
                 }
 
-                return response.json();
-            }
+                const data = await response.json();
+                const propertyGrid = document.getElementById('propertyGrid');
 
-            async updateProperty(propertyId, propertyData) {
-                const response = await fetch(`/api/admin/properties/${propertyId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.token}`
-                    },
-                    body: JSON.stringify(propertyData)
+                data.properties.forEach(property => {
+                    const propertyCard = document.createElement('div');
+                    propertyCard.className = 'property-card';
+                    
+                    propertyCard.innerHTML = `
+                        <div class="property-image">
+                            <img src="${property.image || 'https://via.placeholder.com/300x200'}" alt="${property.address}">
+                            <div class="property-status ${property.status.toLowerCase()}">${property.status}</div>
+                        </div>
+                        <div class="property-content">
+                            <div class="property-header">
+                                <div class="property-title">
+                                    <h3>${property.address}</h3>
+                                    <p>${property.type}</p>
+                                </div>
+                                <div class="property-actions">
+                                    <button class="action-button" onclick="editProperty('${property._id}')">
+                                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    </button>
+                                    <button class="action-button" onclick="viewDocuments('${property._id}')">
+                                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="property-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Owner</span>
+                                    <span class="detail-value">${property.owner.name}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Documents</span>
+                                    <span class="detail-value">${property.documents ? property.documents.length : 0}</span>
+                                </div>
+                            </div>
+                            ${property.documents && property.documents.length > 0 ? `
+                                <div class="documents-section">
+                                    <div class="documents-header">
+                                        <h4>Recent Documents</h4>
+                                    </div>
+                                    <div class="document-list">
+                                        ${property.documents.slice(0, 2).map(doc => `
+                                            <div class="document-item">
+                                                <div class="document-info">
+                                                    <div class="document-icon">
+                                                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                                    </div>
+                                                    <span class="document-name">${doc.name}</span>
+                                                </div>
+                                                <button class="action-button" onclick="viewDocument('${doc._id}')">
+                                                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    propertyGrid.appendChild(propertyCard);
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to update property');
-                }
-
-                return response.json();
-            }
-
-            async deleteProperty(propertyId) {
-                if (!confirm('Are you sure you want to delete this property?')) {
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/api/admin/properties/${propertyId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`
+                // Implement search functionality
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const propertyCards = document.querySelectorAll('.property-card');
+                    
+                    propertyCards.forEach(card => {
+                        const address = card.querySelector('.property-title h3').textContent.toLowerCase();
+                        const type = card.querySelector('.property-title p').textContent.toLowerCase();
+                        const owner = card.querySelector('.detail-value').textContent.toLowerCase();
+                        
+                        if (address.includes(searchTerm) || type.includes(searchTerm) || owner.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
                         }
                     });
+                });
 
-                    if (!response.ok) {
-                        throw new Error('Failed to delete property');
-                    }
-
-                    await this.loadProperties();
-                } catch (error) {
-                    console.error('Error deleting property:', error);
-                    alert('Error deleting property. Please try again.');
-                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load properties');
             }
-
-            async loadProperties() {
-                try {
-                    const response = await fetch('/api/admin/properties', {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to load properties');
-                    }
-
-                    const data = await response.json();
-                    this.renderProperties(data.properties);
-                } catch (error) {
-                    console.error('Error loading properties:', error);
-                }
-            }
-
-            renderProperties(properties) {
-                const grid = document.getElementById('propertiesGrid');
-                
-                if (!properties.length) {
-                    grid.innerHTML = '<p>No properties found</p>';
-                    return;
-                }
-
-                grid.innerHTML = properties.map(property => `
-                    <div class="property-card">
-                        <div class="property-header">
-                            <h3 class="property-title">${property.address}</h3>
-                            <span class="property-status ${property.tenant ? 'status-occupied' : 'status-vacant'}">
-                                ${property.tenant ? 'Occupied' : 'Vacant'}
-                            </span>
-                        </div>
-                        <div class="property-details">
-                            <div class="property-detail">
-                                <svg viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M19 9.3V4h-3v2.6L12 3 2 12h3v8h5v-6h4v6h5v-8h3l-3-2.7zM10 10c0-1.1.9-2 2-2s2 .9 2 2h-4z"/>
-                                </svg>
-                                ${property.type}
-                            </div>
-                            <div class="property-detail">
-                                <svg viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                </svg>
-                                ${property.owner.name}
-                            </div>
-                            <div class="property-detail">
-                                <svg viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                                </svg>
-                                $${property.rent}/month
-                            </div>
-                            <div class="property-detail">
-                                <svg viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M17 15h2v2h-2zm0-4h2v2h-2zm0-4h2v2h-2zm-3.26 0l.12-.34V3.69c0-.71-.71-1.19-1.39-.93L3 7v9c0 .55.45 1 1 1h11.17l1.39 4.06c.38 1.12 2.04.83 2.04-.34v-3.61l.12-.34c.35-.92.35-1.93 0-2.85l-.12-.34V8.34l.12-.34c.35-.92.35-1.93 0-2.85z"/>
-                                </svg>
-                                ${property.bedrooms} bed, ${property.bathrooms} bath
-                            </div>
-                        </div>
-                        <div class="property-actions">
-                            <button class="property-action" onclick="propertiesManager.showModal(${JSON.stringify(property)})">
-                                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                            </button>
-                            <button class="property-action" onclick="propertiesManager.deleteProperty('${property.id}')">
-                                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Initialize properties manager
-        let propertiesManager;
-        document.addEventListener('DOMContentLoaded', () => {
-            propertiesManager = new PropertiesManager();
         });
 
         // Handle logout
         document.getElementById('logoutButton').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('token');
-            window.location.href = '../../auth/login.html';
+            localStorage.removeItem('user');
+            window.location.href = '/auth/login.html';
         });
+
+        // Property management functions
+        function editProperty(propertyId) {
+            // Implement property editing functionality
+            console.log('Edit property:', propertyId);
+        }
+
+        function viewDocuments(propertyId) {
+            // Implement documents viewing functionality
+            console.log('View documents for property:', propertyId);
+        }
+
+        function viewDocument(documentId) {
+            // Implement document viewing functionality
+            console.log('View document:', documentId);
+        }
     </script>
 </body>
 </html> 

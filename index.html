@@ -24,11 +24,73 @@
       scroll-behavior: smooth;
     }
     body {
-      background-color: #1a171d; /* Slightly lighter than pure black */
+      background-color: #0a0a0f;
       color: #eee;
       font-family: 'Poppins', sans-serif;
       line-height: 1.7;
+      position: relative;
+      overflow-x: hidden;
     }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(107, 70, 193, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(128, 90, 213, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(76, 0, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(94, 2, 162, 0.2) 0%, transparent 50%);
+      animation: gradientAnimation 15s ease infinite alternate;
+      z-index: -2;
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 20s infinite;
+    }
+
+    @keyframes gradientAnimation {
+      0% {
+        transform: scale(1) rotate(0deg);
+      }
+      50% {
+        transform: scale(1.2) rotate(5deg);
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+
     h1, h2, h3 {
       font-family: 'Playfair Display', serif;
     }
@@ -44,12 +106,12 @@
 
     /* HEADER & NAV */
     header {
-      background-color: #201d24;
-      border-bottom: 1px solid #5a416b;
+      background-color: rgba(32, 29, 36, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(90, 65, 107, 0.3);
       position: sticky;
       top: 0;
-      z-index: 999;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      z-index: 1000;
     }
     .nav-container {
       max-width: 1200px;
@@ -326,6 +388,49 @@
     <p>&copy; 2025 Zenora MGMT Real Estate. All rights reserved.</p>
   </footer>
 
+  <!-- Particles Container -->
+  <div class="particles"></div>
+
+  <script>
+    // Create particles
+    function createParticles() {
+      const particlesContainer = document.querySelector('.particles');
+      const numberOfParticles = 50;
+
+      for (let i = 0; i < numberOfParticles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random size between 2 and 6 pixels
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random starting position
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        // Random animation duration between 15 and 30 seconds
+        const duration = Math.random() * 15 + 15;
+        particle.style.animation = `float ${duration}s infinite`;
+        
+        // Random delay
+        particle.style.animationDelay = `${Math.random() * 10}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Initialize particles
+    createParticles();
+
+    // Recreate particles periodically to ensure smooth animation
+    setInterval(() => {
+      const particlesContainer = document.querySelector('.particles');
+      particlesContainer.innerHTML = '';
+      createParticles();
+    }, 30000); // Recreate every 30 seconds
+  </script>
 </body>
 </html>
 

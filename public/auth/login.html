@@ -130,6 +130,75 @@
             margin-bottom: 1rem;
             display: none;
         }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .password-requirements {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.5rem 0;
+        }
+
+        .password-requirements li {
+            margin: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .password-requirements li::before {
+            content: "•";
+            color: var(--text-secondary);
+        }
+
+        .password-requirements li.valid::before {
+            content: "✓";
+            color: #10b981;
+        }
+
+        .password-requirements li.invalid::before {
+            content: "×";
+            color: #ef4444;
+        }
+
+        .loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -177,31 +246,71 @@
                     <input type="password" id="password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember-me" name="remember-me">
-                        Remember me
-                    </label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me" name="remember-me">
+                            Remember me
+                        </label>
+                        <a href="#" id="forgot-password-link" style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Sign In</button>
                 <p class="error-message" id="login-error"></p>
+            </form>
+
+            <!-- Forgot Password Form -->
+            <form id="forgot-password-form" class="auth-form">
+                <div class="form-group">
+                    <label for="reset-email">Email</label>
+                    <input type="email" id="reset-email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                <button type="button" class="btn btn-secondary" id="back-to-login" style="margin-top: 1rem;">Back to Login</button>
+            </form>
+
+            <!-- Reset Password Form -->
+            <form id="reset-password-form" class="auth-form">
+                <div class="form-group">
+                    <label for="verification-code">Verification Code</label>
+                    <input type="text" id="verification-code" name="code" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Reset Password</button>
+                <button type="button" class="btn btn-secondary" id="back-to-login-reset" style="margin-top: 1rem;">Back to Login</button>
             </form>
 
             <!-- Register Form -->
             <form id="register-form" class="auth-form">
                 <div class="form-group">
                     <label for="register-name">Full Name</label>
-                    <input type="text" id="register-name" name="name" required>
+                    <input type="text" id="register-name" name="name" required minlength="2">
                 </div>
                 <div class="form-group">
                     <label for="register-email">Email</label>
-                    <input type="email" id="register-email" name="email" required>
+                    <input type="email" id="register-email" name="email" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
                 </div>
                 <div class="form-group">
                     <label for="register-password">Password</label>
                     <input type="password" id="register-password" name="password" required>
+                    <div class="password-requirements">
+                        <p>Password must:</p>
+                        <ul>
+                            <li data-requirement="length">Be at least 8 characters long</li>
+                            <li data-requirement="uppercase">Contain at least one uppercase letter</li>
+                            <li data-requirement="lowercase">Contain at least one lowercase letter</li>
+                            <li data-requirement="number">Contain at least one number</li>
+                            <li data-requirement="special">Contain at least one special character</li>
+                        </ul>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Create Account</button>
-                <p class="error-message" id="register-error"></p>
             </form>
         </div>
     </main>
@@ -221,14 +330,19 @@
                 authTypeButtons.forEach(b => b.classList.remove('active'));
                 button.classList.add('active');
                 currentAuthType = button.dataset.type;
+                errorMessage.style.display = 'none';
                 
                 // Update form behavior based on auth type
                 if (currentAuthType === 'admin') {
                     document.querySelector('.auth-tabs').style.display = 'none';
                     document.getElementById('register-form').style.display = 'none';
                     document.getElementById('login-form').classList.add('active');
+                    document.getElementById('email').placeholder = 'Admin Email';
+                    document.getElementById('password').placeholder = 'Admin Password';
                 } else {
                     document.querySelector('.auth-tabs').style.display = 'flex';
+                    document.getElementById('email').placeholder = 'Email';
+                    document.getElementById('password').placeholder = 'Password';
                     if (document.querySelector('.auth-tab.active').dataset.tab === 'register') {
                         document.getElementById('register-form').style.display = 'block';
                     }
@@ -275,14 +389,49 @@
             });
         });
 
-        // Form submissions
+        // Password validation on input
+        document.getElementById('register-password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            Object.entries(requirements).forEach(([requirement, isValid]) => {
+                const li = document.querySelector(`[data-requirement="${requirement}"]`);
+                li.classList.remove('valid', 'invalid');
+                li.classList.add(isValid ? 'valid' : 'invalid');
+            });
+        });
+
+        // Form submission handlers
+        function handleFormSubmission(form, button) {
+            button.classList.add('loading');
+            button.disabled = true;
+            return () => {
+                button.classList.remove('loading');
+                button.disabled = false;
+            };
+        }
+
+        // Login form submission
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const button = e.target.querySelector('button[type="submit"]');
+            const resetLoading = handleFormSubmission(e.target, button);
 
             try {
-                const response = await fetch('/api/auth/login', {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const endpoint = currentAuthType === 'admin' 
+                    ? '/api/auth/admin/login'
+                    : '/api/auth/login';
+
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -293,73 +442,206 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Store the token
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-
-                    // Show success message
-                    showSuccess('Login successful! Redirecting...');
-
-                    // Redirect based on user role
-                    setTimeout(() => {
-                        if (data.user.role === 'admin') {
-                            window.location.href = '/portal/admin/dashboard.html';
-                        } else {
-                            window.location.href = '/portal/dashboard.html';
-                        }
-                    }, 1000);
+                    
+                    // Redirect based on role
+                    if (data.user.role === 'admin') {
+                        window.location.href = '../portal/admin-dashboard.html';
+                    } else {
+                        window.location.href = '../portal/dashboard.html';
+                    }
                 } else {
                     showError(data.message || 'Login failed');
                 }
             } catch (error) {
                 console.error('Login error:', error);
                 showError('An error occurred during login');
+            } finally {
+                resetLoading();
             }
         });
 
+        // Register form submission
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
+            const button = e.target.querySelector('button[type="submit"]');
+            const resetLoading = handleFormSubmission(e.target, button);
 
             try {
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        password
+                    })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    // Store the token if provided
-                    if (data.token) {
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
-                        
-                        // Show success message
-                        showSuccess('Registration successful! Redirecting...');
-
-                        // Redirect to dashboard
-                        setTimeout(() => {
-                            window.location.href = '/portal/dashboard.html';
-                        }, 1000);
-                    } else {
-                        showSuccess(data.message || 'Registration successful! Please check your email to verify your account.');
-                        // Switch to login tab
-                        document.querySelector('[data-tab="login"]').click();
-                    }
+                    showSuccess('Registration successful! Please log in.');
+                    // Switch to login tab
+                    document.querySelector('[data-tab="login"]').click();
                 } else {
-                    showError(data.message || 'Registration failed');
+                    if (data.message && data.message.includes('already an account associated with this email')) {
+                        // Show error with a link to switch to login
+                        const errorDiv = document.getElementById('error-message');
+                        errorDiv.innerHTML = `${data.message} <br><a href="#" class="switch-to-login" style="color: var(--accent-color); text-decoration: underline;">Click here to login</a>`;
+                        errorDiv.style.display = 'block';
+                        
+                        // Add click handler for the login link
+                        document.querySelector('.switch-to-login').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            document.querySelector('[data-tab="login"]').click();
+                            document.getElementById('email').value = email; // Pre-fill the email
+                        });
+                    } else {
+                        showError(data.message || 'Registration failed');
+                    }
                 }
             } catch (error) {
                 console.error('Registration error:', error);
                 showError('An error occurred during registration');
+            } finally {
+                resetLoading();
             }
         });
+
+        // Forgot password form submission
+        document.getElementById('forgot-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            const resetLoading = handleFormSubmission(e.target, button);
+
+            try {
+                const email = document.getElementById('reset-email').value;
+
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Password reset verification code has been sent to your email.');
+                    document.getElementById('forgot-password-form').classList.remove('active');
+                    document.getElementById('reset-password-form').classList.add('active');
+                } else {
+                    showError(data.message || 'Failed to send reset email');
+                }
+            } catch (error) {
+                console.error('Forgot password error:', error);
+                showError('An error occurred while processing your request');
+            } finally {
+                resetLoading();
+            }
+        });
+
+        // Reset password form submission
+        document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            const resetLoading = handleFormSubmission(e.target, button);
+
+            try {
+                const code = document.getElementById('verification-code').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    showError('Passwords do not match');
+                    return;
+                }
+
+                const response = await fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code,
+                        newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Password has been reset successfully. Please login with your new password.');
+                    document.getElementById('reset-password-form').classList.remove('active');
+                    document.getElementById('login-form').classList.add('active');
+                } else {
+                    showError(data.message || 'Failed to reset password');
+                }
+            } catch (error) {
+                console.error('Reset password error:', error);
+                showError('An error occurred while resetting your password');
+            } finally {
+                resetLoading();
+            }
+        });
+
+        // Clear messages when switching forms
+        function switchForm(fromForm, toForm) {
+            document.getElementById(fromForm).classList.remove('active');
+            document.getElementById(toForm).classList.add('active');
+            clearMessages();
+        }
+
+        // Automatically log out when token expires
+        function setupTokenExpiration() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const expirationTime = payload.exp * 1000; // Convert to milliseconds
+                    
+                    if (Date.now() >= expirationTime) {
+                        // Token has expired
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = '/auth/login.html?session=expired';
+                    } else {
+                        // Set timeout to log out when token expires
+                        setTimeout(() => {
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('user');
+                            window.location.href = '/auth/login.html?session=expired';
+                        }, expirationTime - Date.now());
+                    }
+                } catch (error) {
+                    console.error('Error parsing token:', error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+            }
+        }
+
+        // Check URL parameters for messages
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('verified') === 'true') {
+            showSuccess('Email verified successfully! Please log in.');
+        } else if (urlParams.get('alreadyVerified') === 'true') {
+            showSuccess('Email already verified. Please log in.');
+        } else if (urlParams.get('session') === 'expired') {
+            showError('Your session has expired. Please log in again.');
+        }
+
+        // Initialize token expiration check
+        setupTokenExpiration();
 
         // Check for remembered credentials
         window.addEventListener('load', () => {
@@ -371,12 +653,26 @@
                 document.getElementById('password').value = rememberedPassword;
                 document.getElementById('remember-me').checked = true;
             }
+        });
 
-            // Check for verification success
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('verified') === 'true') {
-                showSuccess('Email verified successfully! You can now log in.');
-            }
+        // Forgot password functionality
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('forgot-password-form').classList.add('active');
+            clearMessages();
+        });
+
+        document.getElementById('back-to-login').addEventListener('click', () => {
+            document.getElementById('forgot-password-form').classList.remove('active');
+            document.getElementById('login-form').classList.add('active');
+            clearMessages();
+        });
+
+        document.getElementById('back-to-login-reset').addEventListener('click', () => {
+            document.getElementById('reset-password-form').classList.remove('active');
+            document.getElementById('login-form').classList.add('active');
+            clearMessages();
         });
     </script>
 </body>

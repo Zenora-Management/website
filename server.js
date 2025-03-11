@@ -20,36 +20,53 @@ const User = require('./models/User');
 const Property = require('./models/Property');
 const Message = require('./models/Message');
 const Document = require('./models/Document');
+const upload = require('./config/upload');
+const crypto = require('crypto');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+// List of allowed admin emails - RESTRICTED ACCESS
+const ALLOWED_ADMIN_EMAILS = [
+    'anshparikh@gmail.com',
+    'anvisrini@gmail.com',
+    'zenoramgmt@gmail.com'
+];
+
 // Connect to MongoDB
 connectDB();
 
-// Create admin user if doesn't exist
-async function createAdminIfNotExists() {
+// Create initial admin users if they don't exist (only for first-time setup)
+async function createAdminUsersIfNotExist() {
     try {
-        const adminExists = await User.findOne({ email: 'admin@zenora.com' });
-        if (!adminExists) {
-            const hashedPassword = await bcrypt.hash('admin123', 10);
-            const adminUser = new User({
-                name: 'Admin User',
-                email: 'admin@zenora.com',
-                password: hashedPassword,
-                role: 'admin',
-                verified: true
-            });
-            await adminUser.save();
-            console.log('Admin user created successfully');
+        const defaultAdminPassword = 'Zenora101!';
+        const hashedPassword = await bcrypt.hash(defaultAdminPassword, 10);
+
+        // Create admin users for each allowed email if they don't exist
+        for (const email of ALLOWED_ADMIN_EMAILS) {
+            const adminExists = await User.findOne({ email });
+            
+            if (!adminExists) {
+                const adminUser = new User({
+                    name: 'Admin',
+                    email: email,
+                    password: hashedPassword,
+                    role: 'admin',
+                    verified: true
+                });
+                await adminUser.save();
+                console.log(`Admin user created successfully for ${email}`);
+            }
         }
     } catch (error) {
-        console.error('Error checking/creating admin:', error);
+        console.error('Error creating admin users:', error);
     }
 }
 
-createAdminIfNotExists();
+// Call this function only once during initial setup
+// createAdminUsersIfNotExist();
 
 // Middleware
 app.use(cors());
@@ -61,18 +78,23 @@ app.use(express.static('public'));
 
 /**
  * TRANSPORTER CONFIGURATION - Using Gmail SMTP
- *
- * SMTP details for Gmail:
- *   - Service: 'gmail'
- *   - Authentication: Your Gmail address and Gmail App Password.
- *
- * The credentials below are as provided. For production, use environment variables.
  */
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-        user: 'zenoramgmt@gmail.com', // Your Gmail address
-        pass: 'kqtc qwxp rnvs yvzm'  // Your Gmail App Password
+        user: 'zenoramgmt@gmail.com',
+        pass: 'kqtc qwxp rnvs yvzm'
+    }
+});
+
+// Verify the transporter configuration
+transporter.verify(function(error, success) {
+    if (error) {
+        console.error('Error verifying email configuration:', error);
+    } else {
+        console.log('Email server is ready to send messages');
     }
 });
 
@@ -105,9 +127,17 @@ const users = [
 // Store verification tokens
 const verificationTokens = new Map();
 
+// Store password reset tokens with expiration
+const passwordResetTokens = new Map();
+
 // Generate verification token
 function generateVerificationToken() {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+// Generate a secure random token
+function generateSecureToken(length = 32) {
+    return crypto.randomBytes(length).toString('hex');
 }
 
 // Send verification email
@@ -134,6 +164,36 @@ async function sendVerificationEmail(email, token) {
         console.log('Verification email sent successfully');
     } catch (error) {
         console.error('Error sending verification email:', error);
+        throw error;
+    }
+}
+
+// Send password reset email
+async function sendPasswordResetEmail(email, code) {
+    const mailOptions = {
+        from: '"Zenora MGMT" <zenoramgmt@gmail.com>',
+        to: email,
+        subject: 'Password Reset - Zenora MGMT',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #805AD5; margin-bottom: 20px;">Password Reset Request</h2>
+                <p>You have requested to reset your password. Use the following verification code to complete the process:</p>
+                <div style="background: #f0f0f0; padding: 15px; text-align: center; margin: 20px 0; border-radius: 5px;">
+                    <h3 style="font-size: 24px; letter-spacing: 5px; margin: 0; color: #4A5568;">${code}</h3>
+                </div>
+                <p>This code will expire in 15 minutes.</p>
+                <p style="color: #718096; font-size: 14px;">If you did not request this password reset, please ignore this email and ensure your account is secure.</p>
+                <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+                <p style="color: #718096; font-size: 14px;">Best regards,<br>Zenora MGMT Team</p>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Password reset email sent successfully');
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
         throw error;
     }
 }
@@ -220,43 +280,61 @@ app.get('/api/user/profile', authenticateToken, (req, res) => {
 });
 
 // User dashboard endpoint
-app.get('/api/user/dashboard', authenticateToken, (req, res) => {
-  const user = users.find(u => u.email === req.user.email);
-  
-  if (!user) {
-    return res.status(404).json({ success: false, message: 'User not found' });
-  }
-  
-  // Mock dashboard data - in production, this would come from a database
-  const dashboardData = {
-    properties: {
-      total: user.properties.length,
-      activeTenants: user.properties.filter(p => p.tenant).length,
-      maintenanceRequests: user.properties.reduce((acc, p) => acc + p.maintenanceRequests.length, 0)
-    },
-    financial: {
-      monthlyRevenue: user.properties.reduce((acc, p) => acc + (p.rent || 0), 0),
-      nextPaymentDue: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-      outstandingBalance: 0
-    },
-    recentUpdates: [
-      {
-        title: 'Maintenance Request Completed',
-        description: 'HVAC system maintenance has been completed at 123 Main St.',
-        date: new Date().toLocaleDateString()
-      },
-      {
-        title: 'Rent Payment Received',
-        description: 'March rent payment received from tenant at 456 Oak Ave.',
-        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleDateString()
-      }
-    ]
-  };
+app.get('/api/user/dashboard', authenticateToken, async (req, res) => {
+    try {
+        // Find user with populated properties
+        const user = await User.findById(req.user._id).populate('properties');
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
 
-  res.json({
-    success: true,
-    ...dashboardData
-  });
+        // Check if user has no properties
+        if (!user.properties || user.properties.length === 0) {
+            return res.json({
+                success: true,
+                hasProperties: false,
+                message: 'You have no properties yet.',
+                listPropertyUrl: '/list-your-home.html'
+            });
+        }
+        
+        // If user has properties, return dashboard data
+        const dashboardData = {
+            hasProperties: true,
+            properties: {
+                total: user.properties.length,
+                activeTenants: user.properties.filter(p => p.tenant).length,
+                maintenanceRequests: user.properties.reduce((acc, p) => acc + (p.maintenanceRequests ? p.maintenanceRequests.length : 0), 0)
+            },
+            financial: {
+                monthlyRevenue: user.properties.reduce((acc, p) => acc + (p.rent || 0), 0),
+                nextPaymentDue: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+                outstandingBalance: 0
+            },
+            recentUpdates: [
+                {
+                    title: 'Welcome to Your Dashboard',
+                    description: 'Start managing your properties efficiently with Zenora MGMT.',
+                    date: new Date().toLocaleDateString()
+                }
+            ]
+        };
+
+        res.json({
+            success: true,
+            ...dashboardData
+        });
+    } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching dashboard data'
+        });
+    }
 });
 
 // Admin Routes
@@ -555,16 +633,48 @@ Preferred Call Time: ${preferredTime}
   }
 });
 
-// Authentication endpoints
-app.post('/api/auth/login', async (req, res) => {
+// Rate limiting for login attempts
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // limit each IP to 5 requests per windowMs
+    message: {
+        success: false,
+        message: 'Too many login attempts. Please try again after 15 minutes.'
+    }
+});
+
+// Password validation function
+function validatePassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const errors = [];
+    if (password.length < minLength) errors.push('be at least 8 characters long');
+    if (!hasUpperCase) errors.push('contain at least one uppercase letter');
+    if (!hasLowerCase) errors.push('contain at least one lowercase letter');
+    if (!hasNumbers) errors.push('contain at least one number');
+    if (!hasSpecialChar) errors.push('contain at least one special character');
+
+    return {
+        isValid: errors.length === 0,
+        errors: errors
+    };
+}
+
+// Apply rate limiting to login routes
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log('Login attempt:', { email }); // Log login attempt
+        console.log('Login attempt:', { email });
 
         const user = await User.findOne({ email });
-        console.log('User found:', user ? 'Yes' : 'No'); // Log if user was found
+        console.log('User found:', user ? 'Yes' : 'No');
 
-        if (!user) {
+        // Regular user login only
+        if (!user || user.role === 'admin') {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
@@ -572,7 +682,7 @@ app.post('/api/auth/login', async (req, res) => {
         }
 
         const isValidPassword = await bcrypt.compare(password, user.password);
-        console.log('Password valid:', isValidPassword); // Log password validation
+        console.log('Password valid:', isValidPassword);
 
         if (!isValidPassword) {
             return res.status(401).json({
@@ -588,7 +698,7 @@ app.post('/api/auth/login', async (req, res) => {
             role: user.role
         }, JWT_SECRET);
 
-        console.log('Login successful for:', user.email); // Log successful login
+        console.log('Login successful for:', user.email);
 
         res.json({
             success: true,
@@ -608,36 +718,141 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-app.post('/api/auth/register', async (req, res) => {
+// Separate admin login endpoint
+app.post('/api/auth/admin/login', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        console.log('Registration attempt:', { name, email }); // Log registration attempt
+        const { email, password } = req.body;
+        console.log('Admin login attempt:', { email });
 
-        if (!name || !email || !password) {
-            return res.status(400).json({
+        if (!email || !ALLOWED_ADMIN_EMAILS.includes(email)) {
+            return res.status(401).json({
                 success: false,
-                message: 'Name, email, and password are required'
+                message: 'Invalid admin credentials'
             });
         }
 
+        let user = await User.findOne({ email });
+
+        // Verify admin password
+        if (password !== 'Zenora101!') {
+            console.log('Invalid admin password attempt');
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid admin credentials'
+            });
+        }
+
+        if (!user) {
+            // Create admin user if it doesn't exist
+            const hashedPassword = await bcrypt.hash('Zenora101!', 10);
+            const newAdmin = new User({
+                name: 'Admin',
+                email: email,
+                password: hashedPassword,
+                role: 'admin',
+                verified: true
+            });
+            user = await newAdmin.save();
+        }
+
+        const token = jwt.sign({
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            role: 'admin'
+        }, JWT_SECRET);
+
+        return res.json({
+            success: true,
+            token,
+            user: {
+                name: user.name,
+                email: user.email,
+                role: 'admin'
+            }
+        });
+    } catch (error) {
+        console.error('Error in admin login:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error: ' + error.message
+        });
+    }
+});
+
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { 
+            name, 
+            email, 
+            password,
+            propertyAddress,
+            propertyType,
+            bedrooms,
+            bathrooms,
+            sqft,
+            rent
+        } = req.body;
+        console.log('Registration attempt:', { name, email, propertyAddress });
+
+        // Validate password
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: `Password must ${passwordValidation.errors.join(', ')}`
+            });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid email address'
+            });
+        }
+
+        // Check if user exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: 'Email already registered'
+                message: 'There is already an account associated with this email. Please use a different email or login to your existing account.'
             });
         }
 
+        // Create user
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
             name,
             email,
             password: hashedPassword,
-            verified: true // Temporarily set to true for testing
+            role: 'user',
+            verified: true
         });
 
         await user.save();
-        console.log('User created successfully:', user._id); // Log successful creation
+        console.log('User created successfully:', user._id);
+
+        // Create property
+        const property = new Property({
+            address: propertyAddress,
+            type: propertyType || 'House', // Default to House if not specified
+            owner: user._id,
+            bedrooms: bedrooms || 0,
+            bathrooms: bathrooms || 0,
+            sqft: sqft || 0,
+            rent: rent || 0,
+            status: 'Active'
+        });
+
+        await property.save();
+        console.log('Property created successfully:', property._id);
+
+        // Add property reference to user
+        user.properties = [property._id];
+        await user.save();
 
         // Generate JWT token for immediate login
         const token = jwt.sign({
@@ -654,7 +869,11 @@ app.post('/api/auth/register', async (req, res) => {
             user: {
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                property: {
+                    address: property.address,
+                    type: property.type
+                }
             }
         });
     } catch (error) {
@@ -824,6 +1043,279 @@ app.post('/api/admin/messages/:messageId/archive', authenticateToken, requireAdm
     } catch (error) {
         console.error('Error archiving message:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// Admin API endpoints
+app.get('/api/admin/clients', authenticateToken, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        // Get all users with role 'user'
+        const clients = await User.find({ role: 'user' }).select('-password');
+        
+        // Get properties for each client
+        const clientsWithProperties = await Promise.all(clients.map(async (client) => {
+            const properties = await Property.find({ owner: client._id });
+            return {
+                ...client.toObject(),
+                properties
+            };
+        }));
+
+        res.json({ clients: clientsWithProperties });
+    } catch (error) {
+        console.error('Error fetching clients:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/admin/properties', authenticateToken, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        // Get all properties with populated owner and documents
+        const properties = await Property.find()
+            .populate('owner', '-password')
+            .populate('documents');
+
+        res.json({ properties });
+    } catch (error) {
+        console.error('Error fetching properties:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/admin/properties/:propertyId/documents', authenticateToken, upload.single('document'), async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        const { propertyId } = req.params;
+        const { name, description } = req.body;
+
+        // Check if property exists
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).json({ error: 'Property not found' });
+        }
+
+        // Create new document
+        const document = new Document({
+            name,
+            description,
+            file: req.file.filename,
+            property: propertyId,
+            uploadedBy: req.user._id
+        });
+
+        await document.save();
+
+        // Add document to property
+        property.documents.push(document._id);
+        await property.save();
+
+        res.json({ document });
+    } catch (error) {
+        console.error('Error uploading document:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/admin/properties/:propertyId/documents', authenticateToken, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        const { propertyId } = req.params;
+
+        // Get all documents for the property
+        const documents = await Document.find({ property: propertyId })
+            .populate('uploadedBy', '-password');
+
+        res.json({ documents });
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/admin/properties/:propertyId', authenticateToken, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        const { propertyId } = req.params;
+        const updateData = req.body;
+
+        // Update property
+        const property = await Property.findByIdAndUpdate(
+            propertyId,
+            updateData,
+            { new: true }
+        ).populate('owner', '-password');
+
+        if (!property) {
+            return res.status(404).json({ error: 'Property not found' });
+        }
+
+        res.json({ property });
+    } catch (error) {
+        console.error('Error updating property:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/admin/properties/:propertyId', authenticateToken, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+
+        const { propertyId } = req.params;
+
+        // Delete all documents associated with the property
+        await Document.deleteMany({ property: propertyId });
+
+        // Delete the property
+        const property = await Property.findByIdAndDelete(propertyId);
+
+        if (!property) {
+            return res.status(404).json({ error: 'Property not found' });
+        }
+
+        res.json({ message: 'Property deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting property:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Forgot password endpoint
+app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log('Forgot password request received for:', email);
+
+        // Find user
+        const user = await User.findOne({ email });
+        
+        // For security, we'll send the same response regardless of whether the user exists
+        const standardResponse = {
+            success: true,
+            message: 'If an account exists with this email, a password reset code will be sent.'
+        };
+
+        if (!user) {
+            console.log('No user found with email:', email);
+            return res.json(standardResponse);
+        }
+
+        // Generate a 6-digit verification code
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log('Generated verification code');
+        
+        // Store the code with expiration (15 minutes)
+        passwordResetTokens.set(email, {
+            code: verificationCode,
+            expiry: Date.now() + 15 * 60 * 1000, // 15 minutes
+            userId: user._id
+        });
+
+        // Send reset email
+        try {
+            await sendPasswordResetEmail(email, verificationCode);
+            console.log('Password reset email sent successfully');
+            return res.json(standardResponse);
+        } catch (emailError) {
+            console.error('Error sending password reset email:', emailError);
+            // Remove the stored token if email fails
+            passwordResetTokens.delete(email);
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send password reset email. Please try again later.'
+            });
+        }
+    } catch (error) {
+        console.error('Error in forgot password:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred while processing your request. Please try again later.'
+        });
+    }
+});
+
+// Reset password endpoint
+app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+        const { code, newPassword } = req.body;
+
+        // Find the email associated with this code
+        let userEmail = null;
+        let userId = null;
+
+        for (const [email, data] of passwordResetTokens.entries()) {
+            if (data.code === code) {
+                // Check if code has expired
+                if (Date.now() > data.expiry) {
+                    passwordResetTokens.delete(email);
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Verification code has expired. Please request a new one.'
+                    });
+                }
+                userEmail = email;
+                userId = data.userId;
+                break;
+            }
+        }
+
+        if (!userEmail) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid verification code'
+            });
+        }
+
+        // Validate password
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: `Password must ${passwordValidation.errors.join(', ')}`
+            });
+        }
+
+        // Update user's password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await User.findByIdAndUpdate(userId, { password: hashedPassword });
+
+        // Remove the used token
+        passwordResetTokens.delete(userEmail);
+
+        res.json({
+            success: true,
+            message: 'Password has been reset successfully'
+        });
+    } catch (error) {
+        console.error('Error in reset password:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while resetting your password'
+        });
     }
 });
 

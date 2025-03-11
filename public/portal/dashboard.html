@@ -9,17 +9,88 @@
     <style>
         .portal-container {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: 300px 1fr;
             min-height: 100vh;
+            background: var(--primary-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%);
+            backdrop-filter: blur(5px);
+            animation: float 20s infinite;
+            opacity: 0.3;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: 10%;
+            animation-delay: 0s;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.15) 100%);
+        }
+
+        .floating-element:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            right: -50px;
+            animation-delay: -5s;
+            background: linear-gradient(135deg, rgba(128, 90, 213, 0.1) 0%, rgba(107, 70, 193, 0.15) 100%);
+        }
+
+        .floating-element:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            left: 30%;
+            animation-delay: -10s;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.15) 0%, rgba(128, 90, 213, 0.1) 100%);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            20% {
+                transform: translate(50px, 50px) rotate(90deg) scale(1.1);
+            }
+            40% {
+                transform: translate(100px, -50px) rotate(180deg) scale(1);
+            }
+            60% {
+                transform: translate(50px, -100px) rotate(270deg) scale(0.9);
+            }
+            80% {
+                transform: translate(-50px, -50px) rotate(360deg) scale(1.1);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
         }
 
         .sidebar {
+            position: fixed;
+            z-index: 2;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2rem;
-            position: fixed;
-            width: 250px;
+            width: 300px;
             height: 100vh;
             overflow-y: auto;
         }
@@ -42,11 +113,12 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 0.75rem 1rem;
+            padding: 1rem 1.5rem;
             color: var(--text-secondary);
             text-decoration: none;
             border-radius: 8px;
             transition: all 0.3s ease;
+            font-size: 1.1rem;
         }
 
         .nav-item:hover,
@@ -56,20 +128,49 @@
         }
 
         .nav-item svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             fill: currentColor;
         }
 
         .main-content {
-            margin-left: 250px;
-            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            margin-left: 300px;
+            padding: 2rem 3rem;
+            width: calc(100% - 300px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-left: 300px;
+        }
+
+        .welcome-header {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .dashboard-grid {
+            width: 100%;
+            max-width: 1200px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
@@ -79,101 +180,147 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 1.5rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .dashboard-card h3 {
-            margin-bottom: 1rem;
             font-size: 1.25rem;
-        }
-
-        .property-updates {
-            margin-bottom: 2rem;
-        }
-
-        .update-item {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .update-item:last-child {
-            border-bottom: none;
-        }
-
-        .update-item h4 {
+            margin-bottom: 1.5rem;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
         }
 
-        .update-item p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+        .stat-item p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
             margin: 0;
         }
 
-        .update-item .date {
-            font-size: 0.75rem;
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            margin: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            margin: 0.25rem 0;
             color: var(--text-secondary);
-            margin-top: 0.5rem;
+        }
+
+        .empty-state p:first-of-type {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .documents-section {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
         }
 
         .documents-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .document-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .document-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .document-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1rem;
-            fill: var(--accent-color);
-        }
-
-        .document-name {
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            margin: 0;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .ai-insights {
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.2) 0%, rgba(128, 90, 213, 0.2) 100%);
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%);
             border-radius: 16px;
             padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .ai-insights h3 {
+            height: 100%;
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .ai-insights p {
-            color: var(--text-secondary);
-            margin: 0;
+            flex-direction: column;
         }
 
         .ai-badge {
             background: var(--accent-gradient);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 500;
+            width: fit-content;
+            margin-bottom: 1rem;
+        }
+
+        #noPropertiesMessage {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 3rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        .btn-add-property {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-add-property:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
@@ -187,16 +334,32 @@
 
             .main-content {
                 margin-left: 0;
-                padding: 1rem;
+                width: 100%;
+                padding: 1.5rem;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="portal-container">
+        <!-- Animated Background -->
+        <div class="animated-background">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+
         <!-- Sidebar -->
         <aside class="sidebar">
-            <a href="../index.html" class="sidebar-logo">Zenora MGMT</a>
+            <a href="../index.html" class="sidebar-logo">Zenora</a>
             <nav class="sidebar-nav">
                 <a href="dashboard.html" class="nav-item active">
                     <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
@@ -227,65 +390,130 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1>Welcome back, <span id="userName">Loading...</span></h1>
+            <div class="welcome-header">
+                <h1>Welcome back, <span id="userName">Loading...</span></h1>
+            </div>
             
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <h3>Property Overview</h3>
-                    <div id="propertyStats">
-                        <p>Loading property statistics...</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <h3>Financial Summary</h3>
-                    <div id="financialStats">
-                        <p>Loading financial data...</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <h3>Recent Updates</h3>
-                    <div id="recentUpdates" class="property-updates">
-                        <p>Loading recent updates...</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <h3>AI Insights</h3>
-                    <div class="ai-insights">
-                        <span class="ai-badge">AI Powered</span>
-                        <p id="aiInsights">Analyzing your property data...</p>
-                    </div>
-                </div>
+            <!-- No Properties Message -->
+            <div id="noPropertiesMessage" style="display: none;">
+                <h3>Welcome to Zenora MGMT!</h3>
+                <p>You haven't added any properties yet. Get started by adding your first property.</p>
+                <a href="../list-your-home.html" class="btn-add-property">
+                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    Add Your Property
+                </a>
             </div>
 
-            <!-- Recent Documents -->
-            <section class="dashboard-card">
-                <h3>Recent Documents</h3>
-                <div id="recentDocuments" class="documents-grid">
-                    <p>Loading documents...</p>
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" style="display: none;">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>
+                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/>
+                            </svg>
+                            Property Overview
+                        </h3>
+                        <div id="propertyStats">
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/>
+                                </svg>
+                                <p>No properties added yet</p>
+                                <p>Add your first property to see statistics here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>
+                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                            </svg>
+                            Financial Summary
+                        </h3>
+                        <div id="financialStats">
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                </svg>
+                                <p>No financial data available</p>
+                                <p>Financial information will appear here once you add a property</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>
+                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                            Recent Updates
+                        </h3>
+                        <div id="recentUpdates" class="property-updates">
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                                <p>No recent updates</p>
+                                <p>Updates about your properties will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>
+                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                            </svg>
+                            AI Insights
+                        </h3>
+                        <div class="ai-insights">
+                            <span class="ai-badge">AI Powered</span>
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                                </svg>
+                                <p>AI insights coming soon</p>
+                                <p>Add properties to receive AI-powered insights about your portfolio</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
+
+                <!-- Recent Documents -->
+                <section class="documents-section dashboard-card">
+                    <h3>
+                        <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                        </svg>
+                        Recent Documents
+                    </h3>
+                    <div id="recentDocuments" class="documents-grid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                            </svg>
+                            <p>No documents uploaded yet</p>
+                            <p>Your property-related documents will appear here</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
     <script>
-        // Check authentication
-        document.addEventListener('DOMContentLoaded', async () => {
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-
             if (!token) {
                 window.location.href = '/auth/login.html';
                 return;
             }
 
-            // Set user name
-            document.getElementById('userName').textContent = user.name || 'User';
-
-            // Fetch dashboard data
             try {
                 const response = await fetch('/api/user/dashboard', {
                     headers: {
@@ -293,49 +521,81 @@
                     }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch dashboard data');
+                const data = await response.json();
+                
+                // Update user name
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user && user.name) {
+                    document.getElementById('userName').textContent = user.name;
                 }
 
-                const data = await response.json();
-
-                // Update property stats
-                const propertyStats = document.getElementById('propertyStats');
-                propertyStats.innerHTML = `
-                    <p>Total Properties: ${data.properties.total}</p>
-                    <p>Active Tenants: ${data.properties.activeTenants}</p>
-                    <p>Maintenance Requests: ${data.properties.maintenanceRequests}</p>
-                `;
-
-                // Update financial stats
-                const financialStats = document.getElementById('financialStats');
-                financialStats.innerHTML = `
-                    <p>Monthly Revenue: $${data.financial.monthlyRevenue.toLocaleString()}</p>
-                    <p>Next Payment Due: ${data.financial.nextPaymentDue}</p>
-                    <p>Outstanding Balance: $${data.financial.outstandingBalance.toLocaleString()}</p>
-                `;
-
-                // Update recent updates
-                const recentUpdates = document.getElementById('recentUpdates');
-                recentUpdates.innerHTML = data.recentUpdates.map(update => `
-                    <div class="update-item">
-                        <h4>${update.title}</h4>
-                        <p>${update.description}</p>
-                        <div class="date">${update.date}</div>
-                    </div>
-                `).join('');
-
+                if (data.success) {
+                    if (!data.hasProperties) {
+                        // Show the no properties message
+                        document.getElementById('noPropertiesMessage').style.display = 'block';
+                        document.getElementById('dashboardContent').style.display = 'none';
+                    } else {
+                        // Show the dashboard content with data
+                        document.getElementById('noPropertiesMessage').style.display = 'none';
+                        document.getElementById('dashboardContent').style.display = 'block';
+                        updateDashboard(data);
+                    }
+                } else {
+                    showError('Failed to load dashboard data. Please try again later.');
+                }
             } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-                // Show error message to user
-                document.querySelector('.dashboard-grid').innerHTML = `
-                    <div class="dashboard-card">
-                        <h3>Error</h3>
-                        <p>Failed to load dashboard data. Please try again later.</p>
-                    </div>
-                `;
+                console.error('Error loading dashboard:', error);
+                showError('An error occurred while loading the dashboard. Please try again later.');
             }
         });
+
+        function updateDashboard(data) {
+            if (!data.properties || data.properties.total === 0) {
+                return; // Keep showing empty states
+            }
+
+            // Update dashboard with actual data when available
+            const { properties, financial, recentUpdates } = data;
+            
+            // Update property stats
+            document.getElementById('propertyStats').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h4>Total Properties</h4>
+                        <p>${properties.total}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Active Tenants</h4>
+                        <p>${properties.activeTenants}</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Maintenance Requests</h4>
+                        <p>${properties.maintenanceRequests}</p>
+                    </div>
+                </div>
+            `;
+
+            // Update other sections similarly when data is available
+        }
+
+        function showError(message) {
+            // Create or update error message element
+            let errorDiv = document.getElementById('errorMessage');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = 'errorMessage';
+                errorDiv.style.cssText = `
+                    color: #ef4444;
+                    background: rgba(239, 68, 68, 0.1);
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                `;
+                document.querySelector('.main-content').prepend(errorDiv);
+            }
+            errorDiv.textContent = message;
+        }
 
         // Handle logout
         document.querySelector('a[href="../auth/login.html"]').addEventListener('click', (e) => {
