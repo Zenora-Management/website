@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin Dashboard</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="dashboard.html" class="logo">Zenora Admin</a>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    Dashboard
+                </a>
+                <a href="users.html" class="admin-nav-item active">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    Users
+                </a>
+                <a href="properties.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
+                    Properties
+                </a>
+                <a href="messages.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                    Messages
+                </a>
+                <a href="#" class="admin-nav-item" id="logoutButton">
+                    <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Users Management</h1>
+                <button class="btn btn-primary" id="addUserBtn">Add User</button>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Properties</th>
+                            <th>Documents</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="7" class="loading">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add User</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label class="form-label" for="userName">Name</label>
+                    <input type="text" id="userName" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="userEmail">Email</label>
+                    <input type="email" id="userEmail" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="userPassword">Password</label>
+                    <input type="password" id="userPassword" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="userRole">Role</label>
+                    <select id="userRole" name="role" class="form-control">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="userVerified" name="verified">
+                        Verified
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/admin.js"></script>
+    <script>
+        class UsersManager extends AdminPortal {
+            constructor() {
+                super();
+                this.setupEventListeners();
+                this.loadUsers();
+            }
+
+            setupEventListeners() {
+                const addUserBtn = document.getElementById('addUserBtn');
+                const userModal = document.getElementById('userModal');
+                const userForm = document.getElementById('userForm');
+                const closeBtn = userModal.querySelector('.modal-close');
+                const cancelBtn = userModal.querySelector('[data-dismiss="modal"]');
+
+                addUserBtn.addEventListener('click', () => this.showModal());
+                closeBtn.addEventListener('click', () => this.hideModal());
+                cancelBtn.addEventListener('click', () => this.hideModal());
+                userForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            }
+
+            showModal(userData = null) {
+                const modal = document.getElementById('userModal');
+                const form = document.getElementById('userForm');
+                const title = modal.querySelector('.modal-title');
+
+                if (userData) {
+                    title.textContent = 'Edit User';
+                    form.elements.name.value = userData.name;
+                    form.elements.email.value = userData.email;
+                    form.elements.role.value = userData.role;
+                    form.elements.verified.checked = userData.verified;
+                    form.dataset.userId = userData.id;
+                    form.elements.password.required = false;
+                } else {
+                    title.textContent = 'Add User';
+                    form.reset();
+                    delete form.dataset.userId;
+                    form.elements.password.required = true;
+                }
+
+                modal.classList.add('active');
+            }
+
+            hideModal() {
+                const modal = document.getElementById('userModal');
+                modal.classList.remove('active');
+            }
+
+            async handleFormSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const userData = Object.fromEntries(formData);
+
+                try {
+                    if (form.dataset.userId) {
+                        await this.updateUser(form.dataset.userId, userData);
+                    } else {
+                        await this.createUser(userData);
+                    }
+
+                    this.hideModal();
+                    await this.loadUsers();
+                } catch (error) {
+                    console.error('Error saving user:', error);
+                    alert('Error saving user. Please try again.');
+                }
+            }
+
+            async createUser(userData) {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create user');
+                }
+
+                return response.json();
+            }
+
+            async updateUser(userId, userData) {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update user');
+                }
+
+                return response.json();
+            }
+
+            async deleteUser(userId) {
+                if (!confirm('Are you sure you want to delete this user?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to delete user');
+                    }
+
+                    await this.loadUsers();
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    alert('Error deleting user. Please try again.');
+                }
+            }
+
+            async loadUsers() {
+                try {
+                    const response = await fetch('/api/admin/users', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to load users');
+                    }
+
+                    const data = await response.json();
+                    this.renderUsers(data.users);
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                }
+            }
+
+            renderUsers(users) {
+                const tbody = document.getElementById('usersTableBody');
+                
+                if (!users.length) {
+                    tbody.innerHTML = '<tr><td colspan="7">No users found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <span class="status-badge ${user.verified ? 'verified' : 'unverified'}">
+                                ${user.verified ? 'Verified' : 'Unverified'}
+                            </span>
+                        </td>
+                        <td>${user.propertiesCount}</td>
+                        <td>${user.documentsCount}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="usersManager.showModal(${JSON.stringify(user)})">
+                                Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="usersManager.deleteUser('${user.id}')">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Initialize users manager
+        let usersManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            usersManager = new UsersManager();
+        });
+
+        // Handle logout
+        document.getElementById('logoutButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '../../auth/login.html';
+        });
+    </script>
+</body>
+</html> 

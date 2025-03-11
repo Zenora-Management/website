@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Zenora MGMT - List Your Home</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- OPTIONAL: Google Maps Places API for address autocomplete 
+       (Replace YOUR_API_KEY with your own if you want the autocomplete feature.) 
+  <script 
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"
+    async 
+    defer
+  ></script> -->
+
+  <style>
+    html { scroll-behavior: smooth; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #1a171d;
+      color: #eee;
+      margin:0;
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.7;
+    }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+    a {
+      color: #d4af37;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #fffbd2;
+    }
+    ul { list-style-type: none; }
+
+    /* HEADER */
+    header {
+      background-color: #201d24;
+      border-bottom: 1px solid #5a416b;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .nav-container {
+      max-width: 1200px; margin: 0 auto;
+      padding: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-left img { height: 50px; border-radius: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-item { position: relative; }
+    .nav-item:hover .dropdown,
+    .dropdown:hover { display: block; }
+    .dropdown {
+      display: none;
+      position: absolute;
+      background: #2e2934;
+      top: 100%;
+      left: 0;
+      min-width: 150px;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
+      z-index: 999;
+    }
+    .dropdown li {
+      padding: 0.5rem 1rem;
+      transition: background-color 0.3s;
+    }
+    .dropdown li:hover {
+      background-color: #5a416b;
+    }
+
+    /* MAIN */
+    .list-container {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background-color: #201d24;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #ffd57e;
+      font-family: 'Playfair Display', serif;
+    }
+    p {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #ccc;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1rem;
+    }
+    label {
+      margin-top: 1rem;
+      font-weight: 500;
+      color: #f6e1b9;
+    }
+    input, select, textarea {
+      padding: 0.7rem;
+      margin-top: 0.3rem;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
+      background-color: #2e2934;
+      color: #eee;
+      font-family: 'Poppins', sans-serif;
+    }
+    .name-row {
+      display: flex; 
+      gap: 1rem;
+    }
+    .name-row > div {
+      flex: 1;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.8rem;
+      background-color: #d4af37;
+      border: none;
+      border-radius: 6px;
+      color: #201d24;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      font-weight: 600;
+    }
+    button:hover {
+      background-color: #fffbd2;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      margin-top: 3rem;
+      border-top: 1px solid #5a416b;
+      background-color: #201d24;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    footer p {
+      color: #cbb6e0;
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+    .email-link {
+      color: #d4af37;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="logo">ZENORA</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="team.html">Team</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html" class="btn btn-primary">Contact Us</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="container">
+        <h1 data-aos="fade-up">List Your Home</h1>
+        <p data-aos="fade-up" data-aos-delay="100">Transform your property management experience with our AI-driven solutions.</p>
+      </div>
+    </header>
+
+    <!-- Benefits Section -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center" data-aos="fade-up">Why Choose Zenora?</h2>
+        <div class="benefits-grid" data-aos="fade-up" data-aos-delay="100">
+          <div class="benefit-card glass">
+            <h3>AI-Powered Management</h3>
+            <p>Leverage cutting-edge technology for optimal property performance and tenant satisfaction.</p>
+          </div>
+          <div class="benefit-card glass">
+            <h3>Professional Photography</h3>
+            <p>High-quality photos and virtual tours to showcase your property's best features.</p>
+          </div>
+          <div class="benefit-card glass">
+            <h3>Smart Pricing</h3>
+            <p>Data-driven pricing strategies to maximize your rental income.</p>
+          </div>
+          <div class="benefit-card glass">
+            <h3>24/7 Support</h3>
+            <p>Round-the-clock assistance for both property owners and tenants.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Listing Form -->
+    <section class="section bg-gradient">
+      <div class="container">
+        <div class="listing-form-container glass" data-aos="fade-up">
+          <h2>List Your Property</h2>
+          <form id="listingForm" class="listing-form">
+            <!-- Property Details -->
+            <div class="form-section">
+              <h3>Property Details</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="address">Property Address</label>
+                  <input type="text" id="address" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bedrooms">Bedrooms</label>
+                  <select id="bedrooms" class="form-input" required>
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5+">5+</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="bathrooms">Bathrooms</label>
+                  <select id="bathrooms" class="form-input" required>
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2">2</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3+">3+</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="sqft">Square Footage</label>
+                  <input type="number" id="sqft" class="form-input" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-section">
+              <h3>Contact Information</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="firstName">First Name</label>
+                  <input type="text" id="firstName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="lastName">Last Name</label>
+                  <input type="text" id="lastName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="email">Email</label>
+                  <input type="email" id="email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="phone">Phone</label>
+                  <input type="tel" id="phone" class="form-input" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section">
+              <h3>Additional Information</h3>
+              <div class="form-group">
+                <label class="form-label" for="description">Property Description</label>
+                <textarea id="description" class="form-input" rows="4"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="plan">Preferred Management Plan</label>
+                <select id="plan" class="form-input" required>
+                  <option value="">Select a Plan</option>
+                  <option value="basic">Basic (8%)</option>
+                  <option value="professional">Professional (6%)</option>
+                  <option value="enterprise">Enterprise (Custom)</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Property</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title text-center" data-aos="fade-up">Our Process</h2>
+        <div class="process-grid" data-aos="fade-up" data-aos-delay="100">
+          <div class="process-step glass">
+            <div class="step-number">1</div>
+            <h3>Submit Your Property</h3>
+            <p>Fill out our simple form with your property details and contact information.</p>
+          </div>
+          <div class="process-step glass">
+            <div class="step-number">2</div>
+            <h3>Property Assessment</h3>
+            <p>Our team will evaluate your property and provide a comprehensive market analysis.</p>
+          </div>
+          <div class="process-step glass">
+            <div class="step-number">3</div>
+            <h3>Onboarding</h3>
+            <p>We'll set up your property on our platform and prepare it for the market.</p>
+          </div>
+          <div class="process-step glass">
+            <div class="step-number">4</div>
+            <h3>Active Management</h3>
+            <p>Sit back while we handle everything from tenant screening to maintenance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h3>Zenora MGMT</h3>
+          <p>Revolutionizing property management with AI-driven solutions.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="list-your-home.html">List Your Home</a></li>
+            <li><a href="rent-analysis.html">Rent Analysis</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="team.html">Our Team</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Zenora MGMT. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-cubic',
+      once: true
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Form submission
+    document.getElementById('listingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Add your form submission logic here
+      alert('Thank you for submitting your property. We will contact you soon!');
+      this.reset();
+    });
+  </script>
+</body>
+</html>

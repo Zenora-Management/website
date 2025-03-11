@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Admin Dashboard</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+    <style>
+        /* Inherit admin dashboard styles */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-sidebar .logo {
+            display: block;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav-item:hover,
+        .admin-nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .admin-nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .admin-main {
+            padding: 2rem;
+            margin-left: 250px;
+        }
+
+        .messages-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            height: calc(100vh - 120px);
+            margin-top: 1rem;
+        }
+
+        .messages-list {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow-y: auto;
+        }
+
+        .message-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .message-item:hover,
+        .message-item.active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .message-item h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .message-item p {
+            margin: 0.5rem 0 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .message-item .message-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .message-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .message-header h2 {
+            margin: 0 0 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .message-header p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .message-body {
+            flex-grow: 1;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .no-message-selected {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .no-message-selected svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .reply-form {
+            margin-top: 1rem;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            min-height: 100px;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            resize: vertical;
+        }
+
+        .reply-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .message-replies {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .reply {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .reply-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="dashboard.html" class="logo">Zenora Admin</a>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    Dashboard
+                </a>
+                <a href="users.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    Users
+                </a>
+                <a href="properties.html" class="admin-nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
+                    Properties
+                </a>
+                <a href="messages.html" class="admin-nav-item active">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                    Messages
+                </a>
+                <a href="#" class="admin-nav-item" id="logoutButton">
+                    <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Messages</h1>
+            </div>
+
+            <div class="messages-container">
+                <div class="messages-list" id="messagesList">
+                    <div class="loading">Loading messages...</div>
+                </div>
+
+                <div class="message-content" id="messageContent">
+                    <div class="no-message-selected">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                        </svg>
+                        <h3>No message selected</h3>
+                        <p>Select a message from the list to view its contents</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/admin.js"></script>
+    <script>
+        class MessagesManager extends AdminPortal {
+            constructor() {
+                super();
+                this.loadMessages();
+            }
+
+            async loadMessages() {
+                try {
+                    const response = await fetch('/api/admin/messages', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to load messages');
+                    }
+
+                    const data = await response.json();
+                    this.renderMessages(data.messages);
+                } catch (error) {
+                    console.error('Error loading messages:', error);
+                }
+            }
+
+            renderMessages(messages) {
+                const list = document.getElementById('messagesList');
+                
+                if (!messages.length) {
+                    list.innerHTML = '<p class="no-messages">No messages found</p>';
+                    return;
+                }
+
+                list.innerHTML = messages.map(message => `
+                    <div class="message-item" onclick="messagesManager.showMessage('${message._id}')">
+                        <h3>${message.subject}</h3>
+                        <p>${message.content.substring(0, 100)}...</p>
+                        <div class="message-meta">
+                            <span>${message.sender.name}</span>
+                            <span>${new Date(message.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async showMessage(messageId) {
+                try {
+                    const response = await fetch(`/api/admin/messages/${messageId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to load message');
+                    }
+
+                    const { message } = await response.json();
+                    this.renderMessageContent(message);
+                } catch (error) {
+                    console.error('Error loading message:', error);
+                }
+            }
+
+            renderMessageContent(message) {
+                const content = document.getElementById('messageContent');
+                
+                content.innerHTML = `
+                    <div class="message-header">
+                        <h2>${message.subject}</h2>
+                        <p>From: ${message.sender.name} (${message.sender.email})</p>
+                        <p>Received: ${new Date(message.createdAt).toLocaleString()}</p>
+                    </div>
+                    <div class="message-body">
+                        ${message.content}
+                    </div>
+                    ${message.replies && message.replies.length > 0 ? `
+                        <div class="message-replies">
+                            <h3>Replies</h3>
+                            ${message.replies.map(reply => `
+                                <div class="reply">
+                                    <div class="reply-header">
+                                        <span>${reply.sender.name}</span>
+                                        <span>${new Date(reply.createdAt).toLocaleString()}</span>
+                                    </div>
+                                    <div class="reply-content">${reply.content}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="reply-form">
+                        <textarea id="replyContent" placeholder="Write your reply..."></textarea>
+                        <div class="message-actions">
+                            <button class="btn btn-primary" onclick="messagesManager.sendReply('${message._id}')">Reply</button>
+                            <button class="btn btn-secondary" onclick="messagesManager.archiveMessage('${message._id}')">Archive</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async sendReply(messageId) {
+                const content = document.getElementById('replyContent').value.trim();
+                
+                if (!content) {
+                    alert('Please enter a reply message');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/admin/messages/${messageId}/reply`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.token}`
+                        },
+                        body: JSON.stringify({ content })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to send reply');
+                    }
+
+                    await this.showMessage(messageId);
+                } catch (error) {
+                    console.error('Error sending reply:', error);
+                    alert('Error sending reply. Please try again.');
+                }
+            }
+
+            async archiveMessage(messageId) {
+                if (!confirm('Are you sure you want to archive this message?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/admin/messages/${messageId}/archive`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to archive message');
+                    }
+
+                    await this.loadMessages();
+                    document.getElementById('messageContent').innerHTML = `
+                        <div class="no-message-selected">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                            </svg>
+                            <h3>No message selected</h3>
+                            <p>Select a message from the list to view its contents</p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error archiving message:', error);
+                    alert('Error archiving message. Please try again.');
+                }
+            }
+        }
+
+        // Initialize messages manager
+        let messagesManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            messagesManager = new MessagesManager();
+        });
+
+        // Handle logout
+        document.getElementById('logoutButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '../../auth/login.html';
+        });
+    </script>
+</body>
+</html> 

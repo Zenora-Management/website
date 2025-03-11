@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rent Analysis - Zenora MGMT</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    html { scroll-behavior: smooth; height: 100%; }
+    body {
+      background-color: #1a171d; 
+      color: #eee;
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* helps pin footer */
+    }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+    a {
+      color: #d4af37;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #fffbd2;
+    }
+    ul { list-style-type: none; }
+
+    /* HEADER & NAV */
+    header {
+      background-color: #201d24;
+      border-bottom: 1px solid #5a416b;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+    }
+    .nav-left img {
+      height: 50px;
+      border-radius: 8px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-item {
+      position: relative;
+    }
+    .nav-item:hover .dropdown,
+    .dropdown:hover {
+      display: block;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      background: #2e2934;
+      top: 100%;
+      left: 0;
+      min-width: 150px;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
+      z-index: 999;
+    }
+    .dropdown li {
+      padding: 0.5rem 1rem;
+    }
+    .dropdown li:hover {
+      background-color: #5a416b;
+    }
+
+    /* MAIN container */
+    .analysis-container {
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 2rem;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .analysis-container h1 {
+      color: #ffd57e;
+      margin-bottom: 1rem;
+      font-family: 'Playfair Display', serif;
+    }
+    .analysis-container p {
+      margin-bottom: 2rem;
+      color: #ccc;
+    }
+    .analysis-container form {
+      margin-bottom: 2rem;
+    }
+    .analysis-container input,
+    .analysis-container select {
+      width: 80%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #5a416b;
+      border-radius: 6px;
+      background-color: #2e2934;
+      color: #eee;
+      font-family: 'Poppins', sans-serif;
+    }
+    .analysis-container button {
+      background-color: #d4af37;
+      color: #201d24;
+      padding: 0.8rem 1.4rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      font-weight: 600;
+    }
+    .analysis-container button:hover {
+      background-color: #fffbd2;
+      transform: translateY(-2px);
+    }
+    #analysis-result {
+      display: none;
+      margin-top: 2rem;
+    }
+    #analysis-result h2 {
+      color: #d4af37;
+      margin-bottom: 0.5rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid #5a416b;
+      background-color: #201d24;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    footer p {
+      color: #cbb6e0;
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+    .email-link {
+      color: #d4af37;
+      text-decoration: underline;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal {
+      background-color: #f8f2e9;
+      color: #333;
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+    .modal h2 {
+      margin-bottom: 1rem;
+      color: #5a416b;
+      font-family: 'Playfair Display', serif;
+    }
+    .modal .toggle-btn {
+      background: none;
+      border: none;
+      color: #5a416b;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .modal form {
+      display: flex; 
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .modal input {
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .modal button {
+      background-color: #d4af37;
+      color: #201d24;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-weight: 600;
+    }
+    .modal button:hover {
+      background-color: #fffbd2;
+      transform: translateY(-2px);
+    }
+    .close-btn {
+      margin-top: 1rem;
+      text-decoration: underline;
+      cursor: pointer;
+      color: #5a416b;
+    }
+    .hidden { display: none; }
+
+    .analysis-form {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      fill: var(--accent-color);
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .analysis-container {
+        padding: 1rem;
+        margin: 2rem auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="logo">ZENORA</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="team.html">Team</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <div id="auth-buttons" class="auth-buttons">
+          <a href="auth/login.html" class="btn btn-primary">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero-section" data-aos="fade-up">
+      <h1>Comprehensive Rent Analysis</h1>
+      <p>Make informed decisions with our AI-powered rental market analysis</p>
+    </section>
+
+    <section class="analysis-features" data-aos="fade-up">
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>Market Insights</h3>
+          <p>Get detailed insights into your local rental market, including average rents, vacancy rates, and market trends.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Competitive Analysis</h3>
+          <p>Compare your property with similar rentals in the area to optimize your pricing strategy.</p>
+        </div>
+        <div class="feature-card">
+          <h3>ROI Calculator</h3>
+          <p>Calculate potential returns on your investment with our advanced ROI calculator.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="analysis-form-section" data-aos="fade-up">
+      <div class="analysis-form-container">
+        <h2>Get Your Free Rent Analysis</h2>
+        <form class="analysis-form">
+          <div class="form-section">
+            <h3>Property Details</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="address">Property Address</label>
+                <input type="text" id="address" name="address" required>
+              </div>
+              <div class="form-group">
+                <label for="propertyType">Property Type</label>
+                <select id="propertyType" name="propertyType" required>
+                  <option value="">Select type</option>
+                  <option value="single-family">Single Family Home</option>
+                  <option value="multi-family">Multi-Family Home</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="condo">Condo</option>
+                  <option value="townhouse">Townhouse</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bedrooms">Bedrooms</label>
+                <select id="bedrooms" name="bedrooms" required>
+                  <option value="">Select bedrooms</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5+">5+</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bathrooms">Bathrooms</label>
+                <select id="bathrooms" name="bathrooms" required>
+                  <option value="">Select bathrooms</option>
+                  <option value="1">1</option>
+                  <option value="1.5">1.5</option>
+                  <option value="2">2</option>
+                  <option value="2.5">2.5</option>
+                  <option value="3+">3+</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sqft">Square Footage</label>
+                <input type="number" id="sqft" name="sqft" required>
+              </div>
+              <div class="form-group">
+                <label for="yearBuilt">Year Built</label>
+                <input type="number" id="yearBuilt" name="yearBuilt" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Contact Information</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" required>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-button">Get Analysis Report</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="process-section" data-aos="fade-up">
+      <h2>How It Works</h2>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <h3>Submit Details</h3>
+          <p>Fill out our simple form with your property information</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <h3>Analysis</h3>
+          <p>Our AI analyzes market data and comparable properties</p>
+        </div>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <h3>Get Report</h3>
+          <p>Receive a detailed report with actionable insights</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" data-aos="fade-up">
+      <h2>Ready to Maximize Your Rental Income?</h2>
+      <p>Get started with your free rent analysis today</p>
+      <a href="#" class="cta-button">Schedule a Consultation</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="team.html">Team</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <p>Email: info@zenoramgmt.com</p>
+        <p>Phone: (555) 123-4567</p>
+      </div>
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-links">
+          <a href="#" target="_blank">LinkedIn</a>
+          <a href="#" target="_blank">Twitter</a>
+          <a href="#" target="_blank">Instagram</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Zenora MGMT. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL OVERLAY -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <h2 id="modal-title">Log In</h2>
+      
+      <button class="toggle-btn" id="toggle-btn">New user? Create an account</button>
+
+      <!-- LOGIN FORM -->
+      <form id="login-form">
+        <input type="text" placeholder="Username or Email" required />
+        <input type="password" placeholder="Password" required />
+        <button type="submit">Log In</button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signup-form" class="hidden">
+        <input type="text" placeholder="First & Last Name" required />
+        <input type="email" placeholder="Email" required />
+        <input type="tel" placeholder="Phone Number" required />
+        <input type="password" placeholder="Create Password" required />
+        <button type="submit">Create Account</button>
+      </form>
+
+      <div class="close-btn" onclick="closeModal()">Close</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      offset: 100,
+      once: true
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Form submission
+    document.querySelector('.analysis-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Thank you for submitting your property details. We will analyze your property and get back to you within 24 hours with a detailed report.');
+    });
+
+    // Modals
+    const modalOverlay = document.getElementById('modal-overlay');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const toggleBtn = document.getElementById('toggle-btn');
+    const modalTitle = document.getElementById('modal-title');
+    const analysisForm = document.getElementById('rentAnalysisForm');
+    const analysisResult = document.getElementById('analysis-result');
+    const rentAnalysisResponse = document.getElementById('rentAnalysisResponse');
+
+    function openModal() {
+      modalOverlay.style.display = 'flex';
+    }
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+    }
+
+    // Toggle between login and signup forms
+    toggleBtn.addEventListener('click', () => {
+      if (signupForm.classList.contains('hidden')) {
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        modalTitle.textContent = 'Create An Account';
+        toggleBtn.textContent = 'Already have an account? Log in';
+      } else {
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        modalTitle.textContent = 'Log In';
+        toggleBtn.textContent = 'New user? Create an account';
+      }
+    });
+
+    // Fake login
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Logged in successfully!');
+      closeModal();
+      // Show the Rent Analysis form
+      analysisForm.style.display = 'block';
+    });
+
+    // Fake signup
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Account created successfully!');
+      closeModal();
+      // Show the Rent Analysis form
+      analysisForm.style.display = 'block';
+    });
+
+    // Submit Rent Analysis Form via AJAX
+    analysisForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(analysisForm);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/sendRentAnalysisEmail', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          rentAnalysisResponse.textContent = result.message;
+          // Show the analysis result
+          analysisResult.style.display = 'block';
+        } else {
+          rentAnalysisResponse.textContent = 'Error: ' + result.message;
+          analysisResult.style.display = 'none';
+        }
+      } catch (error) {
+        console.error(error);
+        rentAnalysisResponse.textContent = 'An error occurred. Please try again.';
+        analysisResult.style.display = 'none';
+      }
+    });
+
+    function downloadPDF() {
+      alert("This would trigger a PDF download with the analysis details.");
+    }
+  </script>
+</body>
+</html>
