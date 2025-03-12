@@ -117,9 +117,12 @@
     <script>
         class UsersManager extends AdminPortal {
             constructor() {
-                super();
+                super(); // Call parent constructor to handle authentication
                 this.setupEventListeners();
-                this.loadUsers();
+            }
+
+            async loadPageData() {
+                await this.loadUsers();
             }
 
             setupEventListeners() {
@@ -128,11 +131,68 @@
                 const userForm = document.getElementById('userForm');
                 const closeBtn = userModal.querySelector('.modal-close');
                 const cancelBtn = userModal.querySelector('[data-dismiss="modal"]');
+                const logoutBtn = document.getElementById('logoutButton');
 
                 addUserBtn.addEventListener('click', () => this.showModal());
                 closeBtn.addEventListener('click', () => this.hideModal());
                 cancelBtn.addEventListener('click', () => this.hideModal());
                 userForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                logoutBtn.addEventListener('click', () => this.logout());
+            }
+
+            logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/auth/login.html';
+            }
+
+            async loadUsers() {
+                try {
+                    const response = await fetch('/api/admin/users', {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to load users');
+                    }
+
+                    const data = await response.json();
+                    if (data.success) {
+                        this.renderUsers(data.users);
+                    }
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    alert('Error loading users. Please try again.');
+                }
+            }
+
+            renderUsers(users) {
+                const tbody = document.getElementById('usersTableBody');
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7">No users found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td><span class="status-badge ${user.verified ? 'status-active' : 'status-pending'}">${user.verified ? 'Verified' : 'Pending'}</span></td>
+                        <td>${user.propertiesCount || 0}</td>
+                        <td>${user.documentsCount || 0}</td>
+                        <td>
+                            <button class="btn btn-icon" onclick="usersManager.editUser('${user.id}')">
+                                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </button>
+                            <button class="btn btn-icon" onclick="usersManager.deleteUser('${user.id}')">
+                                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
             }
 
             showModal(userData = null) {
@@ -241,70 +301,12 @@
                     alert('Error deleting user. Please try again.');
                 }
             }
-
-            async loadUsers() {
-                try {
-                    const response = await fetch('/api/admin/users', {
-                        headers: {
-                            'Authorization': `Bearer ${this.token}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to load users');
-                    }
-
-                    const data = await response.json();
-                    this.renderUsers(data.users);
-                } catch (error) {
-                    console.error('Error loading users:', error);
-                }
-            }
-
-            renderUsers(users) {
-                const tbody = document.getElementById('usersTableBody');
-                
-                if (!users.length) {
-                    tbody.innerHTML = '<tr><td colspan="7">No users found</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.role}</td>
-                        <td>
-                            <span class="status-badge ${user.verified ? 'verified' : 'unverified'}">
-                                ${user.verified ? 'Verified' : 'Unverified'}
-                            </span>
-                        </td>
-                        <td>${user.propertiesCount}</td>
-                        <td>${user.documentsCount}</td>
-                        <td>
-                            <button class="btn btn-secondary" onclick="usersManager.showModal(${JSON.stringify(user)})">
-                                Edit
-                            </button>
-                            <button class="btn btn-danger" onclick="usersManager.deleteUser('${user.id}')">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
         }
 
-        // Initialize users manager
+        // Initialize the Users Manager
         let usersManager;
         document.addEventListener('DOMContentLoaded', () => {
             usersManager = new UsersManager();
-        });
-
-        // Handle logout
-        document.getElementById('logoutButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('token');
-            window.location.href = '../../auth/login.html';
         });
     </script>
 </body>

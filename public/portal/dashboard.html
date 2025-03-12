@@ -3,99 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Portal - Zenora MGMT</title>
+    <title>User Portal - Zenora</title>
     <link rel="stylesheet" href="../styles.css">
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --sidebar-width: 320px;
+            --header-height: 70px;
+            --primary-dark: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #d4af37;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
         .portal-container {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: var(--sidebar-width) 1fr;
             min-height: 100vh;
             background: var(--primary-dark);
-            position: relative;
-            overflow: hidden;
+            max-width: 2000px;
+            margin: 0 auto;
+            will-change: transform;
         }
 
-        .animated-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .floating-element {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%);
-            backdrop-filter: blur(5px);
-            animation: float 20s infinite;
-            opacity: 0.3;
-        }
-
-        .floating-element:nth-child(1) {
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            left: 10%;
-            animation-delay: 0s;
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.15) 100%);
-        }
-
-        .floating-element:nth-child(2) {
-            width: 300px;
-            height: 300px;
-            top: 40%;
-            right: -50px;
-            animation-delay: -5s;
-            background: linear-gradient(135deg, rgba(128, 90, 213, 0.1) 0%, rgba(107, 70, 193, 0.15) 100%);
-        }
-
-        .floating-element:nth-child(3) {
-            width: 200px;
-            height: 200px;
-            bottom: -50px;
-            left: 30%;
-            animation-delay: -10s;
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.15) 0%, rgba(128, 90, 213, 0.1) 100%);
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            20% {
-                transform: translate(50px, 50px) rotate(90deg) scale(1.1);
-            }
-            40% {
-                transform: translate(100px, -50px) rotate(180deg) scale(1);
-            }
-            60% {
-                transform: translate(50px, -100px) rotate(270deg) scale(0.9);
-            }
-            80% {
-                transform: translate(-50px, -50px) rotate(360deg) scale(1.1);
-            }
-            100% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-        }
-
+        /* Sidebar Styles - Optimized */
         .sidebar {
             position: fixed;
-            z-index: 2;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            background: rgba(20, 20, 25, 0.98);
+            border-right: 1px solid var(--border-color);
             padding: 2rem;
-            width: 300px;
+            width: var(--sidebar-width);
             height: 100vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
         .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             margin-bottom: 3rem;
             font-size: 1.5rem;
             font-weight: 700;
@@ -103,223 +57,238 @@
             text-decoration: none;
         }
 
-        .sidebar-nav {
+        .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
             color: var(--text-secondary);
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
             font-size: 1.1rem;
+            white-space: nowrap;
         }
 
         .nav-item:hover,
         .nav-item.active {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             color: var(--text-primary);
         }
 
         .nav-item svg {
             width: 24px;
             height: 24px;
-            fill: currentColor;
         }
 
+        /* Main Content Area - Optimized */
         .main-content {
-            position: relative;
-            z-index: 1;
-            margin-left: 300px;
-            padding: 2rem 3rem;
-            width: calc(100% - 300px);
+            margin-left: var(--sidebar-width);
+            padding: 2rem 4rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-            margin-left: 300px;
+            min-height: 100vh;
+            transform: translateZ(0);
         }
 
-        .welcome-header {
-            width: 100%;
-            max-width: 1200px;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .dashboard-header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .welcome-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
             text-align: center;
         }
 
-        .welcome-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .dashboard-grid {
-            width: 100%;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dashboard-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
+        .welcome-section h1 {
+            font-size: 2rem;
+            color: #fff;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .welcome-section h1 #userName {
+            color: #64ffda;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.25rem;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .stat-item h4 {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-item p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .empty-state {
-            text-align: center;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1600px;
+            margin: 0 auto;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
-            margin: 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .empty-state svg {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            margin: 0.25rem 0;
-            color: var(--text-secondary);
-        }
-
-        .empty-state p:first-of-type {
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
-        .documents-section {
-            width: 100%;
-            max-width: 1200px;
             margin-top: 2rem;
         }
 
-        .documents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.2s ease;
+            transform: translateZ(0);
+            min-width: 280px;
         }
 
-        .ai-insights {
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%);
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card h3 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(135deg, var(--accent-color), #f0c550);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card p {
+            margin: 0.5rem 0 0;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .dashboard-sections {
+            display: block;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .recent-activity {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 1.5rem;
-            height: 100%;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+        }
+
+        .activity-list {
             display: flex;
             flex-direction: column;
+            gap: 1rem;
         }
 
-        .ai-badge {
-            background: var(--accent-gradient);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            width: fit-content;
-            margin-bottom: 1rem;
-        }
-
-        #noPropertiesMessage {
-            width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 3rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-
-        .btn-add-property {
-            display: inline-flex;
+        .activity-item {
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 500;
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            border-radius: 8px;
+            gap: 1rem;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .message-preview {
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .btn-add-property:hover {
+        .message-preview:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .message-preview:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+
+        .sender-info {
+            flex: 1;
+        }
+
+        .sender-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .message-time {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .message-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                padding: 1rem;
+            }
+
+            .main-content {
+                padding: 2rem;
             }
         }
 
@@ -329,60 +298,76 @@
             }
 
             .sidebar {
-                display: none;
+                transform: translateX(-100%);
+                transition: transform 0.2s ease;
+                will-change: transform;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
-                width: 100%;
-                padding: 1.5rem;
+                padding: 1rem;
             }
 
-            .welcome-header h1 {
-                font-size: 2rem;
+            .activity-item {
+                grid-template-columns: auto 1fr;
+                padding: 1rem;
+                gap: 1rem;
             }
 
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .activity-time {
+                grid-column: 2;
+                text-align: left;
             }
         }
     </style>
 </head>
 <body>
     <div class="portal-container">
-        <!-- Animated Background -->
-        <div class="animated-background">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-        </div>
-
         <!-- Sidebar -->
         <aside class="sidebar">
-            <a href="../index.html" class="sidebar-logo">Zenora</a>
-            <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-logo">
+                <span>Zenora</span>
+            </a>
+            <nav class="nav-menu">
                 <a href="dashboard.html" class="nav-item active">
-                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
                     Dashboard
                 </a>
                 <a href="properties.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
                     Properties
                 </a>
                 <a href="documents.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
                     Documents
                 </a>
                 <a href="messages.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </svg>
                     Messages
                 </a>
                 <a href="settings.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
                     Settings
                 </a>
-                <a href="../auth/login.html" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                <a href="#" class="nav-item" id="logoutButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
                     Logout
                 </a>
             </nav>
@@ -390,215 +375,114 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="welcome-header">
-                <h1>Welcome back, <span id="userName">Loading...</span></h1>
-            </div>
-            
-            <!-- No Properties Message -->
-            <div id="noPropertiesMessage" style="display: none;">
-                <h3>Welcome to Zenora MGMT!</h3>
-                <p>You haven't added any properties yet. Get started by adding your first property.</p>
-                <a href="../list-your-home.html" class="btn-add-property">
-                    <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    Add Your Property
-                </a>
+            <div class="dashboard-header">
+                <div class="welcome-section">
+                    <h1>Welcome back, <span id="userName"></span></h1>
+                </div>
             </div>
 
-            <!-- Dashboard Content -->
-            <div id="dashboardContent" style="display: none;">
-                <div class="dashboard-grid">
-                    <div class="dashboard-card">
-                        <h3>
-                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/>
-                            </svg>
-                            Property Overview
-                        </h3>
-                        <div id="propertyStats">
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/>
-                                </svg>
-                                <p>No properties added yet</p>
-                                <p>Add your first property to see statistics here</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="propertyCount">0</h3>
+                    <p>Properties</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="documentCount">0</h3>
+                    <p>Documents</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="messageCount">0</h3>
+                    <p>Messages</p>
+                </div>
+            </div>
 
-                    <div class="dashboard-card">
-                        <h3>
-                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                            </svg>
-                            Financial Summary
-                        </h3>
-                        <div id="financialStats">
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-                                </svg>
-                                <p>No financial data available</p>
-                                <p>Financial information will appear here once you add a property</p>
-                            </div>
-                        </div>
+            <div class="dashboard-sections">
+                <div class="recent-activity">
+                    <div class="activity-header">
+                        <h2>Recent Activity</h2>
                     </div>
-
-                    <div class="dashboard-card">
-                        <h3>
-                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                            </svg>
-                            Recent Updates
-                        </h3>
-                        <div id="recentUpdates" class="property-updates">
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                                </svg>
-                                <p>No recent updates</p>
-                                <p>Updates about your properties will appear here</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <h3>
-                            <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                            </svg>
-                            AI Insights
-                        </h3>
-                        <div class="ai-insights">
-                            <span class="ai-badge">AI Powered</span>
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                                </svg>
-                                <p>AI insights coming soon</p>
-                                <p>Add properties to receive AI-powered insights about your portfolio</p>
-                            </div>
-                        </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be dynamically populated -->
                     </div>
                 </div>
-
-                <!-- Recent Documents -->
-                <section class="documents-section dashboard-card">
-                    <h3>
-                        <svg style="width: 24px; height: 24px;" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
-                        </svg>
-                        Recent Documents
-                    </h3>
-                    <div id="recentDocuments" class="documents-grid">
-                        <div class="empty-state">
-                            <svg viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
-                            </svg>
-                            <p>No documents uploaded yet</p>
-                            <p>Your property-related documents will appear here</p>
-                        </div>
-                    </div>
-                </section>
             </div>
         </main>
     </div>
 
     <script>
-        // Check authentication on page load
-        window.addEventListener('DOMContentLoaded', async () => {
+        // Cache DOM elements
+        const elements = {
+            userName: document.getElementById('userName'),
+            propertyCount: document.getElementById('propertyCount'),
+            documentCount: document.getElementById('documentCount'),
+            messageCount: document.getElementById('messageCount'),
+            activityList: document.getElementById('activityList')
+        };
+
+        // Activity icons mapping - moved outside function for better performance
+        const ACTIVITY_ICONS = {
+            'property': 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+            'document': 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+            'message': 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z'
+        };
+
+        // Date formatter - create once and reuse
+        const dateFormatter = new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Check authentication and load dashboard data
+        document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
-            if (!token) {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!token || !user.email) {
                 window.location.href = '/auth/login.html';
                 return;
             }
 
+            // Update welcome message with user's name
+            const userNameElement = document.getElementById('userName');
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData) {
+                const firstName = userData.firstName || '';
+                const lastName = userData.lastName || '';
+                const displayName = firstName && lastName ? `${firstName} ${lastName}` : userData.email.split('@')[0];
+                userNameElement.textContent = displayName;
+            }
+
             try {
+                // Fetch user dashboard data
                 const response = await fetch('/api/user/dashboard', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
-                const data = await response.json();
-                
-                // Update user name
-                const user = JSON.parse(localStorage.getItem('user'));
-                if (user && user.name) {
-                    document.getElementById('userName').textContent = user.name;
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
                 }
 
-                if (data.success) {
-                    if (!data.hasProperties) {
-                        // Show the no properties message
-                        document.getElementById('noPropertiesMessage').style.display = 'block';
-                        document.getElementById('dashboardContent').style.display = 'none';
-                    } else {
-                        // Show the dashboard content with data
-                        document.getElementById('noPropertiesMessage').style.display = 'none';
-                        document.getElementById('dashboardContent').style.display = 'block';
-                        updateDashboard(data);
-                    }
-                } else {
-                    showError('Failed to load dashboard data. Please try again later.');
-                }
+                const data = await response.json();
+                updateDashboard(data);
             } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showError('An error occurred while loading the dashboard. Please try again later.');
+                console.error('Error:', error);
+                // Handle error appropriately
             }
         });
 
         function updateDashboard(data) {
-            if (!data.properties || data.properties.total === 0) {
-                return; // Keep showing empty states
-            }
-
-            // Update dashboard with actual data when available
-            const { properties, financial, recentUpdates } = data;
-            
-            // Update property stats
-            document.getElementById('propertyStats').innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <h4>Total Properties</h4>
-                        <p>${properties.total}</p>
-                    </div>
-                    <div class="stat-item">
-                        <h4>Active Tenants</h4>
-                        <p>${properties.activeTenants}</p>
-                    </div>
-                    <div class="stat-item">
-                        <h4>Maintenance Requests</h4>
-                        <p>${properties.maintenanceRequests}</p>
-                    </div>
-                </div>
-            `;
-
-            // Update other sections similarly when data is available
+            // Update statistics
+            elements.propertyCount.textContent = data.properties || 0;
+            elements.documentCount.textContent = data.documents || 0;
+            elements.messageCount.textContent = data.messages || 0;
         }
 
-        function showError(message) {
-            // Create or update error message element
-            let errorDiv = document.getElementById('errorMessage');
-            if (!errorDiv) {
-                errorDiv = document.createElement('div');
-                errorDiv.id = 'errorMessage';
-                errorDiv.style.cssText = `
-                    color: #ef4444;
-                    background: rgba(239, 68, 68, 0.1);
-                    padding: 1rem;
-                    border-radius: 8px;
-                    margin-bottom: 1rem;
-                    text-align: center;
-                `;
-                document.querySelector('.main-content').prepend(errorDiv);
-            }
-            errorDiv.textContent = message;
-        }
-
-        // Handle logout
-        document.querySelector('a[href="../auth/login.html"]').addEventListener('click', (e) => {
+        // Update the logout functionality
+        document.getElementById('logoutButton').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('token');
             localStorage.removeItem('user');

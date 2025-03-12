@@ -3,92 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clients - Admin Dashboard</title>
+    <title>Admin Clients - Zenora</title>
     <link rel="stylesheet" href="../../styles.css">
-    <link rel="stylesheet" href="../../css/admin.css">
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
     <style>
-        /* Inherit admin dashboard styles */
-        .client-list {
+        :root {
+            --sidebar-width: 320px;
+            --header-height: 70px;
+            --primary-dark: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #d4af37;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        .admin-container {
             display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            min-height: 100vh;
+            background: var(--primary-dark);
+            will-change: transform;
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            position: fixed;
+            z-index: 10;
+            background: rgba(20, 20, 25, 0.98);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            width: var(--sidebar-width);
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            transform: translateZ(0);
+        }
+
+        .admin-sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
         }
 
-        .client-card {
-            background: rgba(255, 255, 255, 0.03);
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
             border-radius: 12px;
+            transition: background-color 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        .admin-nav-item:hover,
+        .admin-nav-item.active {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .admin-nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Main Content Area */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transform: translateZ(0);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* Clients Table */
+        .clients-table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
         }
 
-        .client-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .client-info {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .client-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .client-details h3 {
-            margin: 0;
-            color: var(--text-primary);
-        }
-
-        .client-details p {
-            margin: 0.25rem 0 0;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .client-properties {
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .property-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .property-item {
-            background: rgba(255, 255, 255, 0.05);
+        .clients-table th,
+        .clients-table td {
             padding: 1rem;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .property-info h4 {
-            margin: 0;
+        .clients-table th {
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .property-info p {
-            margin: 0.25rem 0 0;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
+        .clients-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .client-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
         }
 
         .client-actions {
@@ -98,58 +165,46 @@
 
         .action-button {
             padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            border-radius: 4px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .action-button:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        .action-button svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .search-bar {
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
             color: var(--text-primary);
         }
 
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
 
-        .filter-button {
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.2s ease;
+            }
 
-        .filter-button:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .clients-table-container {
+                padding: 1rem;
+            }
+
+            .clients-table th,
+            .clients-table td {
+                padding: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -157,36 +212,32 @@
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <a href="../../index.html" class="logo">Zenora MGMT</a>
-            
-            <!-- Admin Team Section -->
-            <div class="admin-team">
-                <h3>
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    Admin Team
-                </h3>
-                <div class="admin-list" id="adminList">
-                    <!-- Admin list will be populated dynamically -->
-                </div>
-            </div>
-
+            <a href="dashboard.html" class="logo">
+                <span>Zenora MGMT</span>
+            </a>
             <nav class="admin-nav">
                 <a href="dashboard.html" class="admin-nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
                     Dashboard
                 </a>
                 <a href="clients.html" class="admin-nav-item active">
-                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
                     Clients
                 </a>
                 <a href="properties.html" class="admin-nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
                     Properties
                 </a>
                 <a href="#" class="admin-nav-item" id="logoutButton">
-                    <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
                     Logout
                 </a>
             </nav>
@@ -196,59 +247,56 @@
         <main class="admin-main">
             <div class="admin-header">
                 <h1>Clients</h1>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
             </div>
 
-            <!-- Search and Filter -->
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Search clients..." id="searchInput">
-                <button class="filter-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-                    </svg>
-                    Filter
-                </button>
-            </div>
-
-            <!-- Client List -->
-            <div class="client-list" id="clientList">
-                <!-- Client cards will be populated here -->
+            <div class="clients-table-container">
+                <table class="clients-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Properties</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <!-- Client rows will be dynamically populated -->
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
 
     <script>
+        // List of authorized admin emails
+        const AUTHORIZED_ADMINS = [
+            'anshparikh@gmail.com',
+            'anvisrini@gmail.com',
+            'zenoramgmt@gmail.com'
+        ];
+
+        // Check authentication and admin access
         document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-            if (!token || user.role !== 'admin') {
+            if (!token || !user.email) {
                 window.location.href = '/auth/login.html';
                 return;
             }
 
-            // Populate admin list
-            if (user.adminEmails) {
-                const adminList = document.getElementById('adminList');
-                user.adminEmails.forEach(email => {
-                    const adminItem = document.createElement('div');
-                    adminItem.className = 'admin-item';
-                    
-                    const initials = email.split('@')[0].substring(0, 2).toUpperCase();
-                    
-                    adminItem.innerHTML = `
-                        <div class="admin-avatar">${initials}</div>
-                        <div class="admin-info">
-                            <div class="name">${email.split('@')[0]}</div>
-                            <div class="email">${email}</div>
-                        </div>
-                        <div class="admin-status ${email === user.email ? '' : 'offline'}"></div>
-                    `;
-                    adminList.appendChild(adminItem);
-                });
+            // Check if user's email is in the authorized admins list
+            if (!AUTHORIZED_ADMINS.includes(user.email)) {
+                alert('Unauthorized access. You do not have admin privileges.');
+                window.location.href = '/portal/dashboard.html';
+                return;
             }
 
-            // Fetch and display clients
             try {
+                // Fetch clients data
                 const response = await fetch('/api/admin/clients', {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -256,105 +304,81 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch clients');
+                    throw new Error('Failed to fetch clients data');
                 }
 
                 const data = await response.json();
-                const clientList = document.getElementById('clientList');
-
-                data.clients.forEach(client => {
-                    const clientCard = document.createElement('div');
-                    clientCard.className = 'client-card';
-                    
-                    const initials = client.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                    
-                    clientCard.innerHTML = `
-                        <div class="client-header">
-                            <div class="client-info">
-                                <div class="client-avatar">${initials}</div>
-                                <div class="client-details">
-                                    <h3>${client.name}</h3>
-                                    <p>${client.email}</p>
-                                </div>
-                            </div>
-                            <div class="client-actions">
-                                <button class="action-button" onclick="editClient('${client._id}')">
-                                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                </button>
-                                <button class="action-button" onclick="viewClientProperties('${client._id}')">
-                                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        ${client.properties && client.properties.length > 0 ? `
-                            <div class="client-properties">
-                                <h4>Properties (${client.properties.length})</h4>
-                                <div class="property-list">
-                                    ${client.properties.map(property => `
-                                        <div class="property-item">
-                                            <div class="property-info">
-                                                <h4>${property.address}</h4>
-                                                <p>${property.type}</p>
-                                            </div>
-                                            <button class="action-button" onclick="viewProperty('${property._id}')">
-                                                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                                            </button>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                    `;
-                    
-                    clientList.appendChild(clientCard);
-                });
-
-                // Implement search functionality
-                const searchInput = document.getElementById('searchInput');
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const clientCards = document.querySelectorAll('.client-card');
-                    
-                    clientCards.forEach(card => {
-                        const name = card.querySelector('.client-details h3').textContent.toLowerCase();
-                        const email = card.querySelector('.client-details p').textContent.toLowerCase();
-                        
-                        if (name.includes(searchTerm) || email.includes(searchTerm)) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-
+                populateClientsTable(data.clients);
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to load clients');
+                // Handle error appropriately
             }
         });
 
-        // Handle logout
-        document.getElementById('logoutButton').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/auth/login.html';
-        });
+        function populateClientsTable(clients) {
+            const tableBody = document.getElementById('clientsTableBody');
+            
+            if (!clients || clients.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No clients found</td></tr>';
+                return;
+            }
 
-        // Client management functions
+            tableBody.innerHTML = clients.map(client => `
+                <tr>
+                    <td>${client.firstName} ${client.lastName}</td>
+                    <td>${client.email}</td>
+                    <td>${client.phone || 'N/A'}</td>
+                    <td>${client.properties?.length || 0}</td>
+                    <td>
+                        <span class="client-status ${client.active ? 'status-active' : 'status-inactive'}">
+                            ${client.active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="client-actions">
+                            <button class="action-button" onclick="viewClient('${client._id}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                            <button class="action-button" onclick="editClient('${client._id}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </button>
+                            <button class="action-button" onclick="deleteClient('${client._id}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewClient(clientId) {
+            // Implement view client details functionality
+            console.log('View client:', clientId);
+        }
+
         function editClient(clientId) {
-            // Implement client editing functionality
+            // Implement edit client functionality
             console.log('Edit client:', clientId);
         }
 
-        function viewClientProperties(clientId) {
-            // Implement property viewing functionality
-            console.log('View properties for client:', clientId);
+        function deleteClient(clientId) {
+            // Implement delete client functionality
+            if (confirm('Are you sure you want to delete this client?')) {
+                console.log('Delete client:', clientId);
+            }
         }
 
-        function viewProperty(propertyId) {
-            // Implement property details viewing functionality
-            console.log('View property:', propertyId);
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
         }
     </script>
 </body>

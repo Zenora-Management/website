@@ -13,7 +13,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 4rem 2rem;
+            margin-top: 2rem;
         }
 
         .auth-box {
@@ -288,13 +289,23 @@
 
             <!-- Register Form -->
             <form id="register-form" class="auth-form">
-                <div class="form-group">
-                    <label for="register-name">Full Name</label>
-                    <input type="text" id="register-name" name="name" required minlength="2">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="register-firstName">First Name</label>
+                        <input type="text" id="register-firstName" name="firstName" required minlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-lastName">Last Name</label>
+                        <input type="text" id="register-lastName" name="lastName" required minlength="2">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="register-email">Email</label>
                     <input type="email" id="register-email" name="email" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">Phone Number</label>
+                    <input type="tel" id="register-phone" name="phone" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="1234567890" required>
                 </div>
                 <div class="form-group">
                     <label for="register-password">Password</label>
@@ -465,54 +476,50 @@
         // Register form submission
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const button = e.target.querySelector('button[type="submit"]');
-            const resetLoading = handleFormSubmission(e.target, button);
+            const password = document.getElementById('register-password').value;
+            
+            // Validate password requirements
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            if (!Object.values(requirements).every(Boolean)) {
+                showError('Please ensure your password meets all requirements.');
+                return;
+            }
 
             try {
-                const name = document.getElementById('register-name').value;
-                const email = document.getElementById('register-email').value;
-                const password = document.getElementById('register-password').value;
-
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        name,
-                        email,
-                        password
+                        firstName: document.getElementById('register-firstName').value,
+                        lastName: document.getElementById('register-lastName').value,
+                        email: document.getElementById('register-email').value,
+                        phone: document.getElementById('register-phone').value,
+                        password: password
                     })
                 });
 
                 const data = await response.json();
-
                 if (data.success) {
-                    showSuccess('Registration successful! Please log in.');
-                    // Switch to login tab
-                    document.querySelector('[data-tab="login"]').click();
+                    showSuccess('Registration successful! You can now log in.');
+                    setTimeout(() => {
+                        // Switch to login tab
+                        document.querySelector('[data-tab="login"]').click();
+                    }, 2000);
                 } else {
-                    if (data.message && data.message.includes('already an account associated with this email')) {
-                        // Show error with a link to switch to login
-                        const errorDiv = document.getElementById('error-message');
-                        errorDiv.innerHTML = `${data.message} <br><a href="#" class="switch-to-login" style="color: var(--accent-color); text-decoration: underline;">Click here to login</a>`;
-                        errorDiv.style.display = 'block';
-                        
-                        // Add click handler for the login link
-                        document.querySelector('.switch-to-login').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            document.querySelector('[data-tab="login"]').click();
-                            document.getElementById('email').value = email; // Pre-fill the email
-                        });
-                    } else {
-                        showError(data.message || 'Registration failed');
-                    }
+                    showError(data.message || 'Registration failed. Please try again.');
                 }
             } catch (error) {
-                console.error('Registration error:', error);
-                showError('An error occurred during registration');
-            } finally {
-                resetLoading();
+                console.error('Error:', error);
+                showError('An error occurred during registration. Please try again.');
             }
         });
 

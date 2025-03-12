@@ -23,13 +23,14 @@ const Document = require('./models/Document');
 const upload = require('./config/upload');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // List of allowed admin emails - RESTRICTED ACCESS
-const ALLOWED_ADMIN_EMAILS = [
+const ALLOWED_ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [
     'anshparikh@gmail.com',
     'anvisrini@gmail.com',
     'zenoramgmt@gmail.com'
@@ -76,16 +77,25 @@ app.use(bodyParser.json());
 // Serve static files from the "public" folder
 app.use(express.static('public'));
 
+// Add redirect for admin-dashboard.html
+app.get('/portal/admin-dashboard.html', (req, res) => {
+    res.redirect('/portal/admin/dashboard.html');
+});
+
 /**
  * TRANSPORTER CONFIGURATION - Using Gmail SMTP
+ * For this to work:
+ * 1. Enable 2-Step Verification in your Gmail account
+ * 2. Generate an App Password: Gmail Settings -> Security -> App Passwords
+ * 3. Use that App Password here
  */
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-        user: 'zenoramgmt@gmail.com',
-        pass: 'kqtc qwxp rnvs yvzm'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
@@ -93,6 +103,10 @@ const transporter = nodemailer.createTransport({
 transporter.verify(function(error, success) {
     if (error) {
         console.error('Error verifying email configuration:', error);
+        console.log('Please make sure you have:');
+        console.log('1. Enabled 2-Step Verification in your Gmail account');
+        console.log('2. Generated an App Password from Gmail Settings');
+        console.log('3. Added the correct EMAIL_USER and EMAIL_PASS in your .env file');
     } else {
         console.log('Email server is ready to send messages');
     }
