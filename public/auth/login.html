@@ -8,6 +8,26 @@
     <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-dark: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #d4af37;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
         .auth-container {
             min-height: calc(100vh - 80px);
             display: flex;
@@ -62,37 +82,111 @@
             margin-bottom: 1.5rem;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
+            color: var(--text-secondary);
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            font-size: 0.9rem;
         }
 
-        .form-group input {
+        .form-input {
             width: 100%;
             padding: 0.75rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             color: var(--text-primary);
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
+        .form-input:focus {
             outline: none;
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(128, 90, 213, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--accent-color);
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-left: 0.5rem;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .form-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .form-link:hover {
+            text-decoration: underline;
         }
 
         .checkbox-label {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
             cursor: pointer;
         }
 
         .checkbox-label input[type="checkbox"] {
-            width: auto;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
         }
 
         .auth-type-selector {
@@ -112,35 +206,6 @@
         .auth-type-selector button.active {
             color: var(--accent-color);
             font-weight: 600;
-        }
-
-        .error-message {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .success-message {
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-            width: 100%;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
         }
 
         .password-requirements {
@@ -200,6 +265,20 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        @media (max-width: 640px) {
+            .auth-container {
+                padding: 2rem 1rem;
+            }
+
+            .auth-box {
+                padding: 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.75rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -237,27 +316,38 @@
             <div id="success-message" class="success-message"></div>
 
             <!-- Login Form -->
-            <form id="login-form" class="auth-form active">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+            <div id="login-form" class="auth-form active">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue to your account</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="remember-me" name="remember-me">
-                            Remember me
-                        </label>
-                        <a href="#" id="forgot-password-link" style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+
+                <div id="error-message" class="error-message"></div>
+                <div id="success-message" class="success-message"></div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-input" required>
+                    </div>
+                    <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" id="forgot-password-link" class="form-link">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="form-button">Sign In</button>
+                </form>
+
+                <div class="form-footer">
+                    Don't have an account?<a href="register.html">Sign up</a>
                 </div>
-                <button type="submit" class="btn btn-primary">Sign In</button>
-                <p class="error-message" id="login-error"></p>
-            </form>
+            </div>
 
             <!-- Forgot Password Form -->
             <form id="forgot-password-form" class="auth-form">

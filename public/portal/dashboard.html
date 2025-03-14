@@ -446,7 +446,7 @@
 
             // Update welcome message with user's name
             const userNameElement = document.getElementById('userName');
-            const userData = JSON.parse(localStorage.getItem('userData'));
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
             if (userData) {
                 const firstName = userData.firstName || '';
                 const lastName = userData.lastName || '';

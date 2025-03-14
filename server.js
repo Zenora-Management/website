@@ -23,6 +23,8 @@ const Document = require('./models/Document');
 const upload = require('./config/upload');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -74,8 +76,20 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Middleware to inject environment variables into HTML files
+app.use((req, res, next) => {
+    const originalSend = res.send;
+    res.send = function(data) {
+        if (typeof data === 'string' && req.path.endsWith('.html')) {
+            data = data.replace(/\${GOOGLE_MAPS_API_KEY}/g, process.env.GOOGLE_MAPS_API_KEY || '');
+        }
+        originalSend.call(this, data);
+    };
+    next();
+});
+
 // Serve static files from the "public" folder
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Add redirect for admin-dashboard.html
 app.get('/portal/admin-dashboard.html', (req, res) => {
@@ -800,12 +814,7 @@ app.post('/api/auth/register', async (req, res) => {
             name, 
             email, 
             password,
-            propertyAddress,
-            propertyType,
-            bedrooms,
-            bathrooms,
-            sqft,
-            rent
+            propertyAddress
         } = req.body;
         console.log('Registration attempt:', { name, email, propertyAddress });
 
@@ -827,6 +836,14 @@ app.post('/api/auth/register', async (req, res) => {
             });
         }
 
+        // Validate property address
+        if (!propertyAddress || !propertyAddress.formattedAddress || !propertyAddress.latitude || !propertyAddress.longitude) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid property address'
+            });
+        }
+
         // Check if user exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -843,58 +860,56 @@ app.post('/api/auth/register', async (req, res) => {
             email,
             password: hashedPassword,
             role: 'user',
-            verified: true
+            verified: true,
+            propertyAddress: {
+                formattedAddress: propertyAddress.formattedAddress,
+                latitude: propertyAddress.latitude,
+                longitude: propertyAddress.longitude,
+                placeId: propertyAddress.placeId
+            }
         });
 
         await user.save();
         console.log('User created successfully:', user._id);
 
-        // Create property
-        const property = new Property({
-            address: propertyAddress,
-            type: propertyType || 'House', // Default to House if not specified
-            owner: user._id,
-            bedrooms: bedrooms || 0,
-            bathrooms: bathrooms || 0,
-            sqft: sqft || 0,
-            rent: rent || 0,
-            status: 'Active'
-        });
-
-        await property.save();
-        console.log('Property created successfully:', property._id);
-
-        // Add property reference to user
-        user.properties = [property._id];
+        // Create verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        user.verificationToken = verificationToken;
+        user.verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
         await user.save();
 
-        // Generate JWT token for immediate login
-        const token = jwt.sign({
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role
-        }, JWT_SECRET);
+        // Send verification email
+        const verificationUrl = `${process.env.WEBSITE_URL}/auth/verify-email?token=${verificationToken}`;
+        await sendVerificationEmail(email, verificationUrl);
 
-        res.json({
+        // Create JWT token
+        const token = jwt.sign(
+            { 
+                userId: user._id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(201).json({
             success: true,
-            message: 'Registration successful.',
+            message: 'Registration successful. Please check your email to verify your account.',
             token,
             user: {
+                id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                property: {
-                    address: property.address,
-                    type: property.type
-                }
+                propertyAddress: user.propertyAddress
             }
         });
     } catch (error) {
-        console.error('Error in registration:', error);
+        console.error('Registration error:', error);
         res.status(500).json({
             success: false,
-            message: 'Error during registration: ' + error.message
+            message: 'An error occurred during registration. Please try again.'
         });
     }
 });
