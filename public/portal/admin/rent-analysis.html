@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Rent Analysis - Zenora Admin</title>
+    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="dashboard.html" class="logo">
+                <span>Zenora MGMT</span>
+            </a>
+            <nav class="admin-nav">
+                <div class="admin-section">
+                    <h3 style="color: var(--accent-color); margin: 1rem 0; padding-left: 1rem;">Admin Team</h3>
+                    <div class="admin-team">
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">AN</div>
+                            <div class="admin-info">
+                                <div>anshparikh</div>
+                                <small>anshparikh@gmail.com</small>
+                            </div>
+                        </a>
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">AN</div>
+                            <div class="admin-info">
+                                <div>anvisrini</div>
+                                <small>anvisrini@gmail.com</small>
+                            </div>
+                        </a>
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">ZE</div>
+                            <div class="admin-info">
+                                <div>zenoramgmt</div>
+                                <small>zenoramgmt@gmail.com</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="dashboard.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="clients.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        Clients
+                    </a>
+                    <a href="properties.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Properties
+                    </a>
+                    <a href="rent-analysis.html" class="admin-nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        AI-Rent Analysis
+                    </a>
+                    <a href="#" class="admin-nav-item" id="logoutButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>AI-Rent Analysis</h1>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="content-grid">
+                <!-- Analysis Form -->
+                <div class="analysis-form card">
+                    <h2>Property Details</h2>
+                    <form id="analysisForm" onsubmit="analyzeRent(event)">
+                        <div class="form-group">
+                            <label for="address">Property Address</label>
+                            <input type="text" id="address" name="address" required placeholder="Enter full property address">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bedrooms">Bedrooms</label>
+                                <input type="number" id="bedrooms" name="bedrooms" required min="0" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="bathrooms">Bathrooms</label>
+                                <input type="number" id="bathrooms" name="bathrooms" required min="0" max="10" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="sqft">Square Feet</label>
+                                <input type="number" id="sqft" name="sqft" required min="100">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="propertyType">Property Type</label>
+                            <select id="propertyType" name="propertyType" required>
+                                <option value="">Select property type</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="house">House</option>
+                                <option value="condo">Condo</option>
+                                <option value="townhouse">Townhouse</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analyze Rent</button>
+                    </form>
+                </div>
+
+                <!-- Analysis Results -->
+                <div id="analysisResults" class="analysis-results card" style="display: none;">
+                    <h2>Rent Analysis Results</h2>
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h3>Suggested Rent Range</h3>
+                            <div class="rent-range">
+                                <span id="minRent">$0</span> - <span id="maxRent">$0</span>
+                            </div>
+                        </div>
+                        <div class="result-card">
+                            <h3>Market Confidence</h3>
+                            <div class="confidence-meter">
+                                <div id="confidenceBar" class="confidence-bar"></div>
+                                <span id="confidenceScore">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="market-insights">
+                        <h3>Market Insights</h3>
+                        <ul id="marketInsights">
+                            <!-- Insights will be populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .content-grid {
+            display: grid;
+            gap: 2rem;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .card h2 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .result-card h3 {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .rent-range {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .confidence-meter {
+            position: relative;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .confidence-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .confidence-meter span {
+            position: absolute;
+            right: 0;
+            top: -1.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .market-insights {
+            margin-top: 2rem;
+        }
+
+        .market-insights h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .market-insights ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .market-insights li {
+            color: var(--text-secondary);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .market-insights li:last-child {
+            border-bottom: none;
+        }
+    </style>
+
+    <script>
+        // List of authorized admin emails
+        const AUTHORIZED_ADMINS = [
+            'anshparikh@gmail.com',
+            'anvisrini@gmail.com',
+            'zenoramgmt@gmail.com'
+        ];
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (!token || !user.email) {
+                window.location.href = '/auth/login.html';
+                return;
+            }
+
+            if (!AUTHORIZED_ADMINS.includes(user.email)) {
+                alert('Unauthorized access. You do not have admin privileges.');
+                window.location.href = '/portal/dashboard.html';
+                return;
+            }
+        });
+
+        async function analyzeRent(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/admin/analyze-rent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze rent');
+                }
+
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to analyze rent. Please try again.');
+            }
+        }
+
+        function displayResults(data) {
+            // Show results section
+            document.getElementById('analysisResults').style.display = 'block';
+
+            // Update rent range
+            document.getElementById('minRent').textContent = formatCurrency(data.rentRange.min);
+            document.getElementById('maxRent').textContent = formatCurrency(data.rentRange.max);
+
+            // Update confidence score
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceScore = document.getElementById('confidenceScore');
+            confidenceBar.style.width = `${data.confidence}%`;
+            confidenceScore.textContent = `${data.confidence}%`;
+
+            // Update market insights
+            const insightsList = document.getElementById('marketInsights');
+            insightsList.innerHTML = data.insights.map(insight => `
+                <li>${insight}</li>
+            `).join('');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html> 

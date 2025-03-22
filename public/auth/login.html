@@ -9,15 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #0a0a0f;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --accent-color: #d4af37;
+            --primary-dark: #2c2c2c; /* Gray */
+            --card-bg: rgba(255, 192, 203, 0.03); /* Light Pink */
+            --border-color: rgba(255, 192, 203, 0.1); /* Light Pink */
+            --accent-color: #ff69b4; /* Hot Pink */
             --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
+            --text-secondary: #d3d3d3; /* Light Gray */
+            --success-color: #ff69b4; /* Hot Pink */
+            --warning-color: #ff69b4; /* Hot Pink */
+            --danger-color: #ff69b4; /* Hot Pink */
         }
 
         body {
@@ -548,7 +548,7 @@
                     
                     // Redirect based on role
                     if (data.user.role === 'admin') {
-                        window.location.href = '../portal/admin-dashboard.html';
+                        window.location.href = '../portal/admin/dashboard.html';
                     } else {
                         window.location.href = '../portal/dashboard.html';
                     }

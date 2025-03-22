@@ -5,100 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Properties - Zenora Admin</title>
     <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="../../css/admin.css">
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@600,700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --sidebar-width: 280px;
-            --header-height: 70px;
-            --primary-dark: #0a0a0f;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --accent-color: #d4af37;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-        }
-
-        .admin-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            min-height: 100vh;
-            background: var(--primary-dark);
-        }
-
-        .admin-sidebar {
-            position: fixed;
-            z-index: 10;
-            background: rgba(20, 20, 25, 0.95);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid var(--border-color);
-            padding: 2rem;
-            width: var(--sidebar-width);
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .admin-sidebar .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .admin-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .admin-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .admin-nav-item:hover,
-        .admin-nav-item.active {
-            background: var(--card-bg);
-            color: var(--text-primary);
-        }
-
-        .admin-nav-item svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .admin-main {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .admin-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
+        /* Only keeping property-specific styles */
         .property-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -186,49 +96,7 @@
             color: var(--text-primary);
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-        }
-
-        .status-inactive {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
         @media (max-width: 768px) {
-            .admin-container {
-                grid-template-columns: 1fr;
-            }
-
-            .admin-sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .admin-sidebar.active {
-                transform: translateX(0);
-            }
-
-            .admin-main {
-                margin-left: 0;
-                padding: 1rem;
-            }
-
             .property-grid {
                 grid-template-columns: 1fr;
             }
@@ -240,40 +108,67 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <a href="dashboard.html" class="logo">
-                <span>Zenora Admin</span>
+                <span>Zenora MGMT</span>
             </a>
             <nav class="admin-nav">
-                <a href="dashboard.html" class="admin-nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                    </svg>
-                    Dashboard
-                </a>
-                <a href="users.html" class="admin-nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                    Users
-                </a>
-                <a href="properties.html" class="admin-nav-item active">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    Properties
-                </a>
-                <a href="messages.html" class="admin-nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                    Messages
-                </a>
-                <a href="settings.html" class="admin-nav-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                    Settings
-                </a>
+                <div class="admin-section">
+                    <h3 style="color: var(--accent-color); margin: 1rem 0; padding-left: 1rem;">Admin Team</h3>
+                    <div class="admin-team">
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">AN</div>
+                            <div class="admin-info">
+                                <div>anshparikh</div>
+                                <small>anshparikh@gmail.com</small>
+                            </div>
+                        </a>
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">AN</div>
+                            <div class="admin-info">
+                                <div>anvisrini</div>
+                                <small>anvisrini@gmail.com</small>
+                            </div>
+                        </a>
+                        <a href="#" class="admin-nav-item">
+                            <div class="admin-avatar">ZE</div>
+                            <div class="admin-info">
+                                <div>zenoramgmt</div>
+                                <small>zenoramgmt@gmail.com</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="dashboard.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="users.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        Users
+                    </a>
+                    <a href="properties.html" class="admin-nav-item active">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Properties
+                    </a>
+                    <a href="messages.html" class="admin-nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                        Messages
+                    </a>
+                    <a href="#" class="admin-nav-item" id="logoutButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
             </nav>
         </aside>
 

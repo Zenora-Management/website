@@ -16,7 +16,6 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./config/database');
-const User = require('./models/User');
 const Property = require('./models/Property');
 const Message = require('./models/Message');
 const Document = require('./models/Document');
@@ -26,6 +25,7 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,6 +40,20 @@ const ALLOWED_ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS
 
 // Connect to MongoDB
 connectDB();
+
+// User Schema
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    name: { type: String, required: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    verified: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+    properties: [{ type: mongoose.Schema.Types.Mixed }],
+    documents: [{ type: mongoose.Schema.Types.Mixed }]
+});
+
+const User = mongoose.model('User', userSchema);
 
 // Create initial admin users if they don't exist (only for first-time setup)
 async function createAdminUsersIfNotExist() {
@@ -61,6 +75,8 @@ async function createAdminUsersIfNotExist() {
                 });
                 await adminUser.save();
                 console.log(`Admin user created successfully for ${email}`);
+            } else {
+                console.log(`Admin user already exists for ${email}`);
             }
         }
     } catch (error) {
@@ -68,8 +84,8 @@ async function createAdminUsersIfNotExist() {
     }
 }
 
-// Call this function only once during initial setup
-// createAdminUsersIfNotExist();
+// Call this function to create admin users
+createAdminUsersIfNotExist();
 
 // Middleware
 app.use(cors());
@@ -126,32 +142,6 @@ transporter.verify(function(error, success) {
     }
 });
 
-// Mock database
-const users = [
-  { 
-    id: 1,
-    email: 'demo@example.com', 
-    password: 'password', // In production, this would be hashed
-    name: 'Demo User',
-    role: 'user',
-    verified: true,
-    createdAt: new Date(),
-    properties: [],
-    documents: []
-  },
-  { 
-    id: 2,
-    email: 'admin@zenora.com', 
-    password: 'admin123', // In production, this would be hashed
-    name: 'Admin User',
-    role: 'admin',
-    verified: true,
-    createdAt: new Date(),
-    properties: [],
-    documents: []
-  }
-];
-
 // Store verification tokens
 const verificationTokens = new Map();
 
@@ -160,7 +150,7 @@ const passwordResetTokens = new Map();
 
 // Generate verification token
 function generateVerificationToken() {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
 // Generate a secure random token
@@ -692,58 +682,50 @@ function validatePassword(password) {
     };
 }
 
-// Apply rate limiting to login routes
-app.post('/api/auth/login', loginLimiter, async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        console.log('Login attempt:', { email });
+// Login route
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log('Login attempt for email:', email);
 
-        const user = await User.findOne({ email });
-        console.log('User found:', user ? 'Yes' : 'No');
+    const user = await User.findOne({ email });
+    console.log('User found:', user ? 'Yes' : 'No');
 
-        // Regular user login only
-        if (!user || user.role === 'admin') {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid email or password'
-            });
-        }
-
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        console.log('Password valid:', isValidPassword);
-
-        if (!isValidPassword) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid email or password'
-            });
-        }
-
-        const token = jwt.sign({
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role
-        }, JWT_SECRET);
-
-        console.log('Login successful for:', user.email);
-
-        res.json({
-            success: true,
-            token,
-            user: {
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
-        });
-    } catch (error) {
-        console.error('Error in login:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error: ' + error.message
-        });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match:', isMatch ? 'Yes' : 'No');
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    if (!user.verified) {
+      return res.status(401).json({ success: false, message: 'Please verify your email first' });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: 'Server error during login' });
+  }
 });
 
 // Separate admin login endpoint
@@ -813,10 +795,9 @@ app.post('/api/auth/register', async (req, res) => {
         const { 
             name, 
             email, 
-            password,
-            propertyAddress
+            password
         } = req.body;
-        console.log('Registration attempt:', { name, email, propertyAddress });
+        console.log('Registration attempt:', { name, email });
 
         // Validate password
         const passwordValidation = validatePassword(password);
@@ -836,14 +817,6 @@ app.post('/api/auth/register', async (req, res) => {
             });
         }
 
-        // Validate property address
-        if (!propertyAddress || !propertyAddress.formattedAddress || !propertyAddress.latitude || !propertyAddress.longitude) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a valid property address'
-            });
-        }
-
         // Check if user exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -860,13 +833,7 @@ app.post('/api/auth/register', async (req, res) => {
             email,
             password: hashedPassword,
             role: 'user',
-            verified: true,
-            propertyAddress: {
-                formattedAddress: propertyAddress.formattedAddress,
-                latitude: propertyAddress.latitude,
-                longitude: propertyAddress.longitude,
-                placeId: propertyAddress.placeId
-            }
+            verified: true
         });
 
         await user.save();
@@ -889,7 +856,7 @@ app.post('/api/auth/register', async (req, res) => {
                 email: user.email,
                 role: user.role
             },
-            process.env.JWT_SECRET,
+            JWT_SECRET,
             { expiresIn: '24h' }
         );
 
@@ -901,8 +868,7 @@ app.post('/api/auth/register', async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
-                propertyAddress: user.propertyAddress
+                role: user.role
             }
         });
     } catch (error) {
@@ -1345,6 +1311,60 @@ app.post('/api/auth/reset-password', async (req, res) => {
             success: false,
             message: 'An error occurred while resetting your password'
         });
+    }
+});
+
+// Public AI Rent Analysis endpoint
+app.post('/api/admin/analyze-rent', async (req, res) => {
+    try {
+        const { address, bedrooms, bathrooms, sqft, propertyType } = req.body;
+
+        // Validate inputs
+        if (!address || !bedrooms || !bathrooms || !sqft || !propertyType) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        // TODO: Integrate with OpenAI API for more accurate analysis
+        // For now, using a simple algorithm for demonstration
+        const basePrice = 1500; // Base price for a standard property
+        const bedroomMultiplier = 500; // Price increase per bedroom
+        const bathroomMultiplier = 300; // Price increase per bathroom
+        const sqftMultiplier = 1.5; // Price per square foot
+
+        // Calculate suggested rent
+        const calculatedRent = basePrice + 
+            (bedrooms * bedroomMultiplier) + 
+            (bathrooms * bathroomMultiplier) + 
+            (sqft * sqftMultiplier / 100);
+
+        // Add some randomness for range
+        const minRent = Math.floor(calculatedRent * 0.9);
+        const maxRent = Math.floor(calculatedRent * 1.1);
+
+        // Generate insights based on property type and features
+        const insights = [
+            `This ${propertyType} is in a competitive market area`,
+            `Properties with ${bedrooms} bedrooms typically rent quickly in this area`,
+            `The square footage (${sqft}) is above average for this property type`,
+            `Similar properties have a typical vacancy period of 2-3 weeks`,
+            `Consider seasonal pricing adjustments for optimal occupancy`
+        ];
+
+        // Calculate confidence score (70-95% range for demo)
+        const confidence = Math.floor(Math.random() * 25) + 70;
+
+        res.json({
+            rentRange: {
+                min: minRent,
+                max: maxRent
+            },
+            confidence,
+            insights
+        });
+
+    } catch (error) {
+        console.error('Error in rent analysis:', error);
+        res.status(500).json({ error: 'Failed to analyze rent' });
     }
 });
 
